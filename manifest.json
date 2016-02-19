@@ -1,0 +1,24 @@
+{
+  "manifest_version": 2,
+  "name": "Uber Estimates",
+  "version": "0.1",
+  "content_scripts": [
+    {
+      "matches": [
+        "<all_urls>"
+      ],
+      "js": ["js/content.js"]
+    }
+  ],
+  "browser_action": {
+    "default_icon": "public/static/img/icon.png",
+    "default_popup": "public/html/popup.html"
+  },
+  "background": {
+    "scripts": ["js/background.js"]
+  },
+  "permissions": [
+    "storage",
+    "notifications" 
+  ]
+}
