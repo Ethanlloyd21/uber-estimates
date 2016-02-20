@@ -1,0 +1,5 @@
+"use es6";
+
+module.exports = {
+  GET_LOCATION_AUTOCOMPLETE: "GET_LOCATION_AUTOCOMPLETE"
+};

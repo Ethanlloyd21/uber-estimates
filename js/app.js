@@ -3,10 +3,14 @@
 var ReactDOM = require('react-dom');
 var React = require('react');
 
+var Store = require('./stores/Store');
+var ActionCreator = require('./actions/ActionCreator');
+
 var EstimatesTable = require('./components/EstimatesTable');
 
 var CoordinateFetcher = require('./data/CoordinateFetcher');
 var EstimatesFetcher = require('./data/EstimatesFetcher');
+var LocationAutocompleteFetcher = require('./data/LocationAutocompleteFetcher');
 
 var App = React.createClass({
 
@@ -24,8 +28,18 @@ var App = React.createClass({
           costEstimates: [],
           combinedData: [],
           duration: null,
-          distance: null
+          distance: null,
+          locationAutocompleteData: [],
+          input: "251 Willow Ave"
       };
+  },
+
+  componentWillMount() {
+      ActionCreator.getLocationAutocompleteData(this.state.input);
+
+      this.setState({
+        locationAutocompleteData: Store.getLocationAutocompleteData()
+      });
   },
 
   fetchData: function() {
@@ -99,6 +113,14 @@ var App = React.createClass({
     this.fetchData();
   },
 
+  fetchLocationAutocompleteData: function() {
+    ActionCreator.getLocationAutocompleteData(this.state.input);
+
+    this.setState({
+      locationAutocompleteData: Store.getLocationAutocompleteData()
+    });
+  },
+
   render: function() {
     if (this.state.formattedStartAddress == null) {
       var startAddressMessage = null;
@@ -112,11 +134,13 @@ var App = React.createClass({
       var endAddressMessage = <div className="formatted-address">Formatted End Address: {this.state.formattedEndAddress}</div>;
     }
 
+    console.log(this.state);
+
     return (
       <div>
         <input className="address-input" type="text" placeholder="Start Address" onChange={this.handleStartChange} />
         <input className="address-input" type="text" placeholder="End Address" onChange={this.handleEndChange} />
-        <button className="get-estimate-button" onClick={this.handleButtonClick}>Get Estimates</button>
+        <button className="get-estimate-button" onClick={this.fetchLocationAutocompleteData}>Get Estimates</button>
         <EstimatesTable className="estimates-table" estimates={this.state.combinedData} />
         {startAddressMessage}
         {endAddressMessage}

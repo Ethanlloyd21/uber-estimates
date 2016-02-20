@@ -23,7 +23,12 @@
     "react": "^0.14.7",
     "react-dom": "^0.14.0",
     "superagent": "latest",
-    "reactable": "latest"
+    "reactable": "latest",
+    "deepcopy": "latest",
+    "flux": "latest",
+    "object-assign": "latest",
+    "events": "^1.0.2", 
+    "express": "latest"
   },
   "devDependencies": {
     "jsx-loader": "^0.12.2",
