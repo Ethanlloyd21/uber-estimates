@@ -126,9 +126,21 @@ var App = React.createClass({
   },
 
   handleSuggestionInputFocus: function() {
-    var isHidden = !this.state.isHidden;
     this.setState({
-      isHidden: isHidden
+      isHidden: false
+    });
+  },
+
+  handleSuggestionInputBlur: function() {
+    this.setState({
+      isHidden: true
+    });
+  },
+
+  handleSuggestionOnClick: function(event) {
+    event.persist();
+    this.setState({
+      input: event.target.value
     });
   },
 
@@ -181,8 +193,16 @@ var App = React.createClass({
         <input className="address-input" type="text" placeholder="End Address" onChange={this.handleEndChange} />
         <button className="get-estimate-button" onClick={this.fetchLocationAutocompleteData}>Get Estimates</button>
         <div className="geosuggest">
-          <SuggestionInput input={this.state.input} onFocus={this.handleSuggestionInputFocus} onInputKeyDown={this.onInputKeyDown} />
-          <SuggestionList suggestions={this.state.locationAutocompleteData} isHidden={this.state.isHidden} activeSuggestionIndex={this.state.activeSuggestionIndex}/>
+          <SuggestionInput 
+            input={this.state.input} 
+            onFocus={this.handleSuggestionInputFocus} 
+            onBlur={this.handleSuggestionInputBlur}
+            onInputKeyDown={this.onInputKeyDown} />
+          <SuggestionList 
+            suggestions={this.state.locationAutocompleteData} 
+            isHidden={this.state.isHidden} 
+            activeSuggestionIndex={this.state.activeSuggestionIndex} 
+            handleSuggestionOnClick={this.state.handleSuggestionOnClick} />
         </div>
         <EstimatesTable className="estimates-table" estimates={this.state.combinedData} />
         {startAddressMessage}

@@ -14,7 +14,12 @@ var SuggestionList = React.createClass({
       } else {
         var className = "geosuggest-item";
       }
-      suggestions.push(<Suggestion className={className} value={suggestion.description}/>);
+      suggestions.push(
+        <Suggestion 
+          className={className} 
+          value={suggestion.description} 
+          handleSuggestionOnClick={this.props.handleSuggestionOnClick} />
+      );
       counter++;
     }.bind(this));
     return suggestions;

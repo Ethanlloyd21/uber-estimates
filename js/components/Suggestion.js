@@ -6,7 +6,9 @@ var Suggestion = React.createClass({
   render: function() {
 
     return (
-      <li className={this.props.className}>{this.props.value}</li>
+      <li 
+        className={this.props.className}
+        onSelect={this.props.handleSuggestionOnClick}>{this.props.value}</li>
     )
   }
 });
