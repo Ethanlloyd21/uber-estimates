@@ -7,8 +7,7 @@ var Store = require('./stores/Store');
 var ActionCreator = require('./actions/ActionCreator');
 
 var EstimatesTable = require('./components/EstimatesTable');
-var SuggestionInput = require('./components/SuggestionInput');
-var SuggestionList = require('./components/SuggestionList');
+var Geosuggestion = require('./components/Geosuggestion');
 
 var CoordinateFetcher = require('./data/CoordinateFetcher');
 var EstimatesFetcher = require('./data/EstimatesFetcher');
@@ -31,18 +30,20 @@ var App = React.createClass({
           combinedData: [],
           duration: null,
           distance: null,
-          locationAutocompleteData: [],
-          input: null,
-          isHidden: true,
-          activeSuggestionIndex: 0  
+          startAddressLocationAutocompleteData: [],
+          endAddressLocationAutocompleteData: [], 
+          activeStartAddressSuggestion: null,
+          activeEndAddressSuggestion: null,
+          activeStartAddressSuggestionIndex: 0,
+          activeEndAddressSuggestionIndex: 0
       };
   },
 
   componentWillMount() {
-      ActionCreator.getLocationAutocompleteData(this.state.input);
+      ActionCreator.getLocationAutocompleteData(this.state.activeStartAddressSuggestion);
 
       this.setState({
-        locationAutocompleteData: Store.getLocationAutocompleteData()
+        startAddressLocationAutocompleteData: Store.getLocationAutocompleteData()
       });
   },
 
@@ -117,63 +118,76 @@ var App = React.createClass({
     this.fetchData();
   },
 
-  fetchLocationAutocompleteData: function() {
-    ActionCreator.getLocationAutocompleteData(this.state.input);
-
-    this.setState({
-      locationAutocompleteData: Store.getLocationAutocompleteData()
-    });
-  },
-
-  handleSuggestionOnChange: function(event) {
+  handleSuggestionOnChange: function(event, type) {
     ActionCreator.getLocationAutocompleteData(event.target.value);
-
-    this.setState({
-      locationAutocompleteData: Store.getLocationAutocompleteData(),
-      input: event.target.value
-    });
+    if (type == "startAddress") {
+      this.setState({
+        startAddressLocationAutocompleteData: Store.getLocationAutocompleteData(),
+        activeStartAddressSuggestion: event.target.value
+      });
+    } else {
+      this.setState({
+        endAddressLocationAutocompleteData: Store.getLocationAutocompleteData(),
+        activeEndAddressSuggestion: event.target.value
+      });
+    }
   },
 
-  handleSuggestionInputFocus: function() {
-    this.setState({
-      isHidden: false
-    });
-  },
-
-  handleSuggestionInputBlur: function() {
-    this.setState({
-      isHidden: true
-    });
-  },
-
-  handleSuggestionOnClick: function(event) {
+  handleSuggestionOnClick: function(event, type) {
     event.persist();
-    this.setState({
-      input: event.target.outerText
-    });
+    if (type == "startAddress") {
+      this.setState({
+        activeStartAddressSuggestion: event.target.outerText
+      });
+    } else {
+      this.setState({
+        activeEndAddressSuggestion: event.target.outerText
+      });
+    }
   },
 
-  onInputKeyDown: function(event) {
+  onInputKeyDown: function(event, type) {
     switch (event.which) {
       case 40: // DOWN
         event.preventDefault();
-        var newActiveSuggestionIndex = this.state.activeSuggestionIndex + 1;
-        this.setState({
-          activeSuggestionIndex: newActiveSuggestionIndex
-        });
+        if (type == "startAddress") {
+          var newActiveSuggestionIndex = this.state.activeStartAddressSuggestionIndex + 1;
+          this.setState({
+            activeStartAddressSuggestionIndex: newActiveSuggestionIndex
+          });
+        } else {
+          var newActiveSuggestionIndex = this.state.activeEndAddressSuggestionIndex + 1;
+          this.setState({
+            activeEndAddressSuggestionIndex: newActiveSuggestionIndex
+          });
+        }
         break;
       case 38: // UP
         event.preventDefault();
-        var newActiveSuggestionIndex = this.state.activeSuggestionIndex - 1;
-        this.setState({
-          activeSuggestionIndex: newActiveSuggestionIndex
-        });
+        if (type == "startAddress") {
+          var newActiveSuggestionIndex = this.state.activeStartAddressSuggestionIndex - 1;
+          this.setState({
+            activeStartAddressSuggestionIndex: newActiveSuggestionIndex
+          });
+        } else {
+          var newActiveSuggestionIndex = this.state.activeEndAddressSuggestionIndex - 1;
+          this.setState({
+            activeEndAddressSuggestionIndex: newActiveSuggestionIndex
+          });
+        }
         break;
       case 13: // ENTER
-        var locationAutocompleteData = this.state.locationAutocompleteData;
-        this.setState({
-          input: locationAutocompleteData[this.state.activeSuggestionIndex].description
-        })
+        if (type == "startAddress") {
+          var locationAutocompleteData = this.state.startAddressLocationAutocompleteData;
+          this.setState({
+            startAddress: locationAutocompleteData[this.state.activeStartAddressSuggestionIndex].description
+          });
+        } else {
+          var locationAutocompleteData = this.state.endAddressLocationAutocompleteData;
+          this.setState({
+            endAddress: locationAutocompleteData[this.state.activeEndAddressSuggestionIndex].description
+          });
+        }
         break;
       case 9: // TAB
         break;
@@ -200,22 +214,25 @@ var App = React.createClass({
 
     return (
       <div>
-        <input className="address-input" type="text" placeholder="Start Address" onChange={this.handleStartChange} />
-        <input className="address-input" type="text" placeholder="End Address" onChange={this.handleEndChange} />
+        <Geosuggestion 
+          input={this.state.startAddress} 
+          placeholder={"Start Address"}
+          type={"startAddress"}
+          onInputKeyDown={this.onInputKeyDown} 
+          onChange={this.handleSuggestionOnChange}
+          suggestions={this.state.startAddressLocationAutocompleteData} 
+          activeSuggestionIndex={this.state.activeStartAddressSuggestionIndex} 
+          handleSuggestionOnClick={this.handleSuggestionOnClick} />
+        <Geosuggestion 
+          input={this.state.endAddress} 
+          placeholder={"End Address"}
+          type={"endAddress"}
+          onInputKeyDown={this.onInputKeyDown} 
+          onChange={this.handleSuggestionOnChange}
+          suggestions={this.state.endAddressLocationAutocompleteData} 
+          activeSuggestionIndex={this.state.activeEndAddressSuggestionIndex} 
+          handleSuggestionOnClick={this.handleSuggestionOnClick} />
         <button className="get-estimate-button" onClick={this.fetchLocationAutocompleteData}>Get Estimates</button>
-        <div className="geosuggest">
-          <SuggestionInput 
-            input={this.state.input} 
-            onFocus={this.handleSuggestionInputFocus} 
-            onBlur={this.handleSuggestionInputBlur}
-            onInputKeyDown={this.onInputKeyDown} 
-            onChange={this.handleSuggestionOnChange}/>
-          <SuggestionList 
-            suggestions={this.state.locationAutocompleteData} 
-            isHidden={this.state.isHidden} 
-            activeSuggestionIndex={this.state.activeSuggestionIndex} 
-            handleSuggestionOnClick={this.handleSuggestionOnClick} />
-        </div>
         <EstimatesTable className="estimates-table" estimates={this.state.combinedData} />
         {startAddressMessage}
         {endAddressMessage}

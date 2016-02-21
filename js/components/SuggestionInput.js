@@ -10,10 +10,10 @@ var SuggestionInput = React.createClass({
       <input 
         className="geosuggest__input" 
         type="text" 
-        placeholder="Start Address" 
+        placeholder={this.props.placeholder}
         value={this.props.input} 
         onFocus={this.props.onFocus} 
-        onBlur={this.props.onFocus}
+        onBlur={this.props.onBlur}
         onKeyDown={this.props.onInputKeyDown}
         onChange={this.props.onChange}>
       </input>

@@ -53,11 +53,10 @@
 	var ActionCreator = __webpack_require__(167);
 
 	var EstimatesTable = __webpack_require__(185);
-	var SuggestionInput = __webpack_require__(202);
-	var SuggestionList = __webpack_require__(203);
+	var Geosuggestion = __webpack_require__(202);
 
-	var CoordinateFetcher = __webpack_require__(205);
-	var EstimatesFetcher = __webpack_require__(206);
+	var CoordinateFetcher = __webpack_require__(206);
+	var EstimatesFetcher = __webpack_require__(207);
 	var LocationAutocompleteFetcher = __webpack_require__(176);
 
 	var App = React.createClass({displayName: "App",
@@ -77,18 +76,20 @@
 	          combinedData: [],
 	          duration: null,
 	          distance: null,
-	          locationAutocompleteData: [],
-	          input: null,
-	          isHidden: true,
-	          activeSuggestionIndex: 0  
+	          startAddressLocationAutocompleteData: [],
+	          endAddressLocationAutocompleteData: [], 
+	          activeStartAddressSuggestion: null,
+	          activeEndAddressSuggestion: null,
+	          activeStartAddressSuggestionIndex: 0,
+	          activeEndAddressSuggestionIndex: 0
 	      };
 	  },
 
 	  componentWillMount() {
-	      ActionCreator.getLocationAutocompleteData(this.state.input);
+	      ActionCreator.getLocationAutocompleteData(this.state.activeStartAddressSuggestion);
 
 	      this.setState({
-	        locationAutocompleteData: Store.getLocationAutocompleteData()
+	        startAddressLocationAutocompleteData: Store.getLocationAutocompleteData()
 	      });
 	  },
 
@@ -163,63 +164,76 @@
 	    this.fetchData();
 	  },
 
-	  fetchLocationAutocompleteData: function() {
-	    ActionCreator.getLocationAutocompleteData(this.state.input);
-
-	    this.setState({
-	      locationAutocompleteData: Store.getLocationAutocompleteData()
-	    });
-	  },
-
-	  handleSuggestionOnChange: function(event) {
+	  handleSuggestionOnChange: function(event, type) {
 	    ActionCreator.getLocationAutocompleteData(event.target.value);
-
-	    this.setState({
-	      locationAutocompleteData: Store.getLocationAutocompleteData(),
-	      input: event.target.value
-	    });
+	    if (type == "startAddress") {
+	      this.setState({
+	        startAddressLocationAutocompleteData: Store.getLocationAutocompleteData(),
+	        activeStartAddressSuggestion: event.target.value
+	      });
+	    } else {
+	      this.setState({
+	        endAddressLocationAutocompleteData: Store.getLocationAutocompleteData(),
+	        activeEndAddressSuggestion: event.target.value
+	      });
+	    }
 	  },
 
-	  handleSuggestionInputFocus: function() {
-	    this.setState({
-	      isHidden: false
-	    });
-	  },
-
-	  handleSuggestionInputBlur: function() {
-	    this.setState({
-	      isHidden: true
-	    });
-	  },
-
-	  handleSuggestionOnClick: function(event) {
+	  handleSuggestionOnClick: function(event, type) {
 	    event.persist();
-	    this.setState({
-	      input: event.target.outerText
-	    });
+	    if (type == "startAddress") {
+	      this.setState({
+	        activeStartAddressSuggestion: event.target.outerText
+	      });
+	    } else {
+	      this.setState({
+	        activeEndAddressSuggestion: event.target.outerText
+	      });
+	    }
 	  },
 
-	  onInputKeyDown: function(event) {
+	  onInputKeyDown: function(event, type) {
 	    switch (event.which) {
 	      case 40: // DOWN
 	        event.preventDefault();
-	        var newActiveSuggestionIndex = this.state.activeSuggestionIndex + 1;
-	        this.setState({
-	          activeSuggestionIndex: newActiveSuggestionIndex
-	        });
+	        if (type == "startAddress") {
+	          var newActiveSuggestionIndex = this.state.activeStartAddressSuggestionIndex + 1;
+	          this.setState({
+	            activeStartAddressSuggestionIndex: newActiveSuggestionIndex
+	          });
+	        } else {
+	          var newActiveSuggestionIndex = this.state.activeEndAddressSuggestionIndex + 1;
+	          this.setState({
+	            activeEndAddressSuggestionIndex: newActiveSuggestionIndex
+	          });
+	        }
 	        break;
 	      case 38: // UP
 	        event.preventDefault();
-	        var newActiveSuggestionIndex = this.state.activeSuggestionIndex - 1;
-	        this.setState({
-	          activeSuggestionIndex: newActiveSuggestionIndex
-	        });
+	        if (type == "startAddress") {
+	          var newActiveSuggestionIndex = this.state.activeStartAddressSuggestionIndex - 1;
+	          this.setState({
+	            activeStartAddressSuggestionIndex: newActiveSuggestionIndex
+	          });
+	        } else {
+	          var newActiveSuggestionIndex = this.state.activeEndAddressSuggestionIndex - 1;
+	          this.setState({
+	            activeEndAddressSuggestionIndex: newActiveSuggestionIndex
+	          });
+	        }
 	        break;
 	      case 13: // ENTER
-	        var locationAutocompleteData = this.state.locationAutocompleteData;
-	        this.setState({
-	          input: locationAutocompleteData[this.state.activeSuggestionIndex].description
-	        })
+	        if (type == "startAddress") {
+	          var locationAutocompleteData = this.state.startAddressLocationAutocompleteData;
+	          this.setState({
+	            startAddress: locationAutocompleteData[this.state.activeStartAddressSuggestionIndex].description
+	          });
+	        } else {
+	          var locationAutocompleteData = this.state.endAddressLocationAutocompleteData;
+	          this.setState({
+	            endAddress: locationAutocompleteData[this.state.activeEndAddressSuggestionIndex].description
+	          });
+	        }
 	        break;
 	      case 9: // TAB
 	        break;
@@ -246,22 +260,25 @@
 
 	    return (
 	      React.createElement("div", null, 
-	        React.createElement("input", {className: "address-input", type: "text", placeholder: "Start Address", onChange: this.handleStartChange}), 
-	        React.createElement("input", {className: "address-input", type: "text", placeholder: "End Address", onChange: this.handleEndChange}), 
+	        React.createElement(Geosuggestion, {
+	          input: this.state.startAddress, 
+	          placeholder: "Start Address", 
+	          type: "startAddress", 
+	          onInputKeyDown: this.onInputKeyDown, 
+	          onChange: this.handleSuggestionOnChange, 
+	          suggestions: this.state.startAddressLocationAutocompleteData, 
+	          activeSuggestionIndex: this.state.activeStartAddressSuggestionIndex, 
+	          handleSuggestionOnClick: this.handleSuggestionOnClick}), 
+	        React.createElement(Geosuggestion, {
+	          input: this.state.endAddress, 
+	          placeholder: "End Address", 
+	          type: "endAddress", 
+	          onInputKeyDown: this.onInputKeyDown, 
+	          onChange: this.handleSuggestionOnChange, 
+	          suggestions: this.state.endAddressLocationAutocompleteData, 
+	          activeSuggestionIndex: this.state.activeEndAddressSuggestionIndex, 
+	          handleSuggestionOnClick: this.handleSuggestionOnClick}), 
 	        React.createElement("button", {className: "get-estimate-button", onClick: this.fetchLocationAutocompleteData}, "Get Estimates"), 
-	        React.createElement("div", {className: "geosuggest"}, 
-	          React.createElement(SuggestionInput, {
-	            input: this.state.input, 
-	            onFocus: this.handleSuggestionInputFocus, 
-	            onBlur: this.handleSuggestionInputBlur, 
-	            onInputKeyDown: this.onInputKeyDown, 
-	            onChange: this.handleSuggestionOnChange}), 
-	          React.createElement(SuggestionList, {
-	            suggestions: this.state.locationAutocompleteData, 
-	            isHidden: this.state.isHidden, 
-	            activeSuggestionIndex: this.state.activeSuggestionIndex, 
-	            handleSuggestionOnClick: this.handleSuggestionOnClick})
-	        ), 
 	        React.createElement(EstimatesTable, {className: "estimates-table", estimates: this.state.combinedData}), 
 	        startAddressMessage, 
 	        endAddressMessage
@@ -26928,6 +26945,67 @@
 
 	var React = __webpack_require__(147);
 
+	var SuggestionInput = __webpack_require__(203);
+	var SuggestionList = __webpack_require__(204);
+
+	var Geosuggestion = React.createClass({displayName: "Geosuggestion",
+
+	  getInitialState() {
+	      return {
+	          isHidden: false  
+	      };
+	  },
+
+	  onFocus: function() {
+	     this.setState({
+	      isHidden: false
+	    });
+	  },
+
+	  onBlur: function() {
+	    this.setState({
+	      isHidden: true
+	    });
+	  },
+
+	  onChange: function(event) {
+	    this.props.onChange(event, this.props.type);
+	  },
+
+	  onInputKeyDown: function(event) {
+	    this.props.onInputKeyDown(event, this.props.type);
+	  },
+
+	  render: function() {
+	    return (
+	      React.createElement("div", {className: "geosuggest"}, 
+	        React.createElement(SuggestionInput, {
+	          input: this.props.input, 
+	          placeholder: this.props.placeholder, 
+	          onFocus: this.onFocus, 
+	          onBlur: this.onBlur, 
+	          onInputKeyDown: this.onInputKeyDown, 
+	          onChange: this.onChange}), 
+	        React.createElement(SuggestionList, {
+	          suggestions: this.props.suggestions, 
+	          isHidden: this.state.isHidden, 
+	          activeSuggestionIndex: this.props.activeSuggestionIndex, 
+	          handleSuggestionOnClick: this.props.handleSuggestionOnClick})
+	      )
+	    )
+	  }
+	});
+
+	module.exports = Geosuggestion;
+
+/***/ },
+/* 203 */
+/***/ function(module, exports, __webpack_require__) {
+
+	"use es6";
+
+	var React = __webpack_require__(147);
+
 	var SuggestionInput = React.createClass({displayName: "SuggestionInput",
 
 	  render: function() {
@@ -26936,10 +27014,10 @@
 	      React.createElement("input", {
 	        className: "geosuggest__input", 
 	        type: "text", 
-	        placeholder: "Start Address", 
+	        placeholder: this.props.placeholder, 
 	        value: this.props.input, 
 	        onFocus: this.props.onFocus, 
-	        onBlur: this.props.onFocus, 
+	        onBlur: this.props.onBlur, 
 	        onKeyDown: this.props.onInputKeyDown, 
 	        onChange: this.props.onChange}
 	      )
@@ -26950,14 +27028,14 @@
 	module.exports = SuggestionInput;
 
 /***/ },
-/* 203 */
+/* 204 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use es6";
 
 	var React = __webpack_require__(147);
 
-	var Suggestion = __webpack_require__(204);
+	var Suggestion = __webpack_require__(205);
 
 	var SuggestionList = React.createClass({displayName: "SuggestionList",
 	  generateSuggestions: function() {
@@ -26999,7 +27077,7 @@
 	module.exports = SuggestionList;
 
 /***/ },
-/* 204 */
+/* 205 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use es6";
@@ -27012,7 +27090,8 @@
 	    return (
 	      React.createElement("li", {
 	        className: this.props.className, 
-	        onClick: this.props.handleSuggestionOnClick}, this.props.value)
+	        onClick: this.props.handleSuggestionOnClick}, this.props.value
+	      )
 	    )
 	  }
 	});
@@ -27020,7 +27099,7 @@
 	module.exports = Suggestion;
 
 /***/ },
-/* 205 */
+/* 206 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use es6";
@@ -27055,7 +27134,7 @@
 	module.exports = CoordinateFetcher;
 
 /***/ },
-/* 206 */
+/* 207 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use es6";
