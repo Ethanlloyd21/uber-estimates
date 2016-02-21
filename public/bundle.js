@@ -78,7 +78,9 @@
 	          duration: null,
 	          distance: null,
 	          locationAutocompleteData: [],
-	          input: "251 Willow Ave"
+	          input: "251 Willow Ave",
+	          isHidden: true,
+	          activeSuggestionIndex: 0  
 	      };
 	  },
 
@@ -169,6 +171,41 @@
 	    });
 	  },
 
+	  handleSuggestionInputFocus: function() {
+	    var isHidden = !this.state.isHidden;
+	    this.setState({
+	      isHidden: isHidden
+	    });
+	  },
+
+	  onInputKeyDown: function(event) {
+	    switch (event.which) {
+	      case 40: // DOWN
+	        event.preventDefault();
+	        var newActiveSuggestionIndex = this.state.activeSuggestionIndex + 1;
+	        this.setState({
+	          activeSuggestionIndex: newActiveSuggestionIndex
+	        });
+	        break;
+	      case 38: // UP
+	        event.preventDefault();
+	        var newActiveSuggestionIndex = this.state.activeSuggestionIndex - 1;
+	        this.setState({
+	          activeSuggestionIndex: newActiveSuggestionIndex
+	        });
+	        break;
+	      case 13: // ENTER
+	        event.preventDefault();
+	        break;
+	      case 9: // TAB
+	        break;
+	      case 27: // ESC
+	        break;
+	      default:
+	        break;
+	    }
+	  },
+
 	  render: function() {
 	    if (this.state.formattedStartAddress == null) {
 	      var startAddressMessage = null;
@@ -189,8 +226,10 @@
 	        React.createElement("input", {className: "address-input", type: "text", placeholder: "Start Address", onChange: this.handleStartChange}), 
 	        React.createElement("input", {className: "address-input", type: "text", placeholder: "End Address", onChange: this.handleEndChange}), 
 	        React.createElement("button", {className: "get-estimate-button", onClick: this.fetchLocationAutocompleteData}, "Get Estimates"), 
-	        React.createElement(SuggestionInput, {input: this.state.input}), 
-	        React.createElement(SuggestionList, {suggestions: this.state.locationAutocompleteData}), 
+	        React.createElement("div", {className: "geosuggest"}, 
+	          React.createElement(SuggestionInput, {input: this.state.input, onFocus: this.handleSuggestionInputFocus, onInputKeyDown: this.onInputKeyDown}), 
+	          React.createElement(SuggestionList, {suggestions: this.state.locationAutocompleteData, isHidden: this.state.isHidden, activeSuggestionIndex: this.state.activeSuggestionIndex})
+	        ), 
 	        React.createElement(EstimatesTable, {className: "estimates-table", estimates: this.state.combinedData}), 
 	        startAddressMessage, 
 	        endAddressMessage
@@ -26858,11 +26897,18 @@
 	var React = __webpack_require__(147);
 
 	var SuggestionInput = React.createClass({displayName: "SuggestionInput",
+
 	  render: function() {
 
 	    return (
-	      React.createElement("input", null, 
-	        this.props.input
+	      React.createElement("input", {
+	        className: "geosuggest__input", 
+	        type: "text", 
+	        placeholder: "Start Address", 
+	        value: this.props.input, 
+	        onFocus: this.props.onFocus, 
+	        onBlur: this.props.onFocus, 
+	        onKeyDown: this.props.onInputKeyDown}
 	      )
 	    )
 	  }
@@ -26883,16 +26929,29 @@
 	var SuggestionList = React.createClass({displayName: "SuggestionList",
 	  generateSuggestions: function() {
 	    var suggestions = [];
+	    var counter = 0;
 	    this.props.suggestions.forEach(function (suggestion) {
-	      suggestions.push(React.createElement(Suggestion, {value: suggestion.description}));
-	    })
+	      if (counter == this.props.activeSuggestionIndex) {
+	        var className = "geosuggest-item--active";
+	      } else {
+	        var className = "geosuggest-item";
+	      }
+	      suggestions.push(React.createElement(Suggestion, {className: className, value: suggestion.description}));
+	      counter++;
+	    }.bind(this));
 	    return suggestions;
 	  },
 
 	  render: function() {
 
+	    if (this.props.isHidden) {
+	      var className="geosuggest__suggests--hidden";
+	    } else {
+	      var className="geosuggest__suggests";
+	    }
+
 	    return (
-	      React.createElement("ul", null, 
+	      React.createElement("ul", {className: className}, 
 	        this.generateSuggestions()
 	      )
 	    )
@@ -26913,7 +26972,7 @@
 	  render: function() {
 
 	    return (
-	      React.createElement("li", null, this.props.value)
+	      React.createElement("li", {className: this.props.className}, this.props.value)
 	    )
 	  }
 	});

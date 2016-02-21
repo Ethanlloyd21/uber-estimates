@@ -32,7 +32,9 @@ var App = React.createClass({
           duration: null,
           distance: null,
           locationAutocompleteData: [],
-          input: "251 Willow Ave"
+          input: "251 Willow Ave",
+          isHidden: true,
+          activeSuggestionIndex: 0  
       };
   },
 
@@ -123,6 +125,41 @@ var App = React.createClass({
     });
   },
 
+  handleSuggestionInputFocus: function() {
+    var isHidden = !this.state.isHidden;
+    this.setState({
+      isHidden: isHidden
+    });
+  },
+
+  onInputKeyDown: function(event) {
+    switch (event.which) {
+      case 40: // DOWN
+        event.preventDefault();
+        var newActiveSuggestionIndex = this.state.activeSuggestionIndex + 1;
+        this.setState({
+          activeSuggestionIndex: newActiveSuggestionIndex
+        });
+        break;
+      case 38: // UP
+        event.preventDefault();
+        var newActiveSuggestionIndex = this.state.activeSuggestionIndex - 1;
+        this.setState({
+          activeSuggestionIndex: newActiveSuggestionIndex
+        });
+        break;
+      case 13: // ENTER
+        event.preventDefault();
+        break;
+      case 9: // TAB
+        break;
+      case 27: // ESC
+        break;
+      default:
+        break;
+    }
+  },
+
   render: function() {
     if (this.state.formattedStartAddress == null) {
       var startAddressMessage = null;
@@ -143,8 +180,10 @@ var App = React.createClass({
         <input className="address-input" type="text" placeholder="Start Address" onChange={this.handleStartChange} />
         <input className="address-input" type="text" placeholder="End Address" onChange={this.handleEndChange} />
         <button className="get-estimate-button" onClick={this.fetchLocationAutocompleteData}>Get Estimates</button>
-        <SuggestionInput input={this.state.input}/>
-        <SuggestionList suggestions={this.state.locationAutocompleteData}/>
+        <div className="geosuggest">
+          <SuggestionInput input={this.state.input} onFocus={this.handleSuggestionInputFocus} onInputKeyDown={this.onInputKeyDown} />
+          <SuggestionList suggestions={this.state.locationAutocompleteData} isHidden={this.state.isHidden} activeSuggestionIndex={this.state.activeSuggestionIndex}/>
+        </div>
         <EstimatesTable className="estimates-table" estimates={this.state.combinedData} />
         {startAddressMessage}
         {endAddressMessage}
