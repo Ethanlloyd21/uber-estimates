@@ -53,9 +53,11 @@
 	var ActionCreator = __webpack_require__(167);
 
 	var EstimatesTable = __webpack_require__(185);
+	var SuggestionInput = __webpack_require__(202);
+	var SuggestionList = __webpack_require__(203);
 
-	var CoordinateFetcher = __webpack_require__(202);
-	var EstimatesFetcher = __webpack_require__(203);
+	var CoordinateFetcher = __webpack_require__(205);
+	var EstimatesFetcher = __webpack_require__(206);
 	var LocationAutocompleteFetcher = __webpack_require__(176);
 
 	var App = React.createClass({displayName: "App",
@@ -187,6 +189,8 @@
 	        React.createElement("input", {className: "address-input", type: "text", placeholder: "Start Address", onChange: this.handleStartChange}), 
 	        React.createElement("input", {className: "address-input", type: "text", placeholder: "End Address", onChange: this.handleEndChange}), 
 	        React.createElement("button", {className: "get-estimate-button", onClick: this.fetchLocationAutocompleteData}, "Get Estimates"), 
+	        React.createElement(SuggestionInput, {input: this.state.input}), 
+	        React.createElement(SuggestionList, {suggestions: this.state.locationAutocompleteData}), 
 	        React.createElement(EstimatesTable, {className: "estimates-table", estimates: this.state.combinedData}), 
 	        startAddressMessage, 
 	        endAddressMessage
@@ -26851,6 +26855,77 @@
 
 	"use es6";
 
+	var React = __webpack_require__(147);
+
+	var SuggestionInput = React.createClass({displayName: "SuggestionInput",
+	  render: function() {
+
+	    return (
+	      React.createElement("input", null, 
+	        this.props.input
+	      )
+	    )
+	  }
+	});
+
+	module.exports = SuggestionInput;
+
+/***/ },
+/* 203 */
+/***/ function(module, exports, __webpack_require__) {
+
+	"use es6";
+
+	var React = __webpack_require__(147);
+
+	var Suggestion = __webpack_require__(204);
+
+	var SuggestionList = React.createClass({displayName: "SuggestionList",
+	  generateSuggestions: function() {
+	    var suggestions = [];
+	    this.props.suggestions.forEach(function (suggestion) {
+	      suggestions.push(React.createElement(Suggestion, {value: suggestion.description}));
+	    })
+	    return suggestions;
+	  },
+
+	  render: function() {
+
+	    return (
+	      React.createElement("ul", null, 
+	        this.generateSuggestions()
+	      )
+	    )
+	  }
+	});
+
+	module.exports = SuggestionList;
+
+/***/ },
+/* 204 */
+/***/ function(module, exports, __webpack_require__) {
+
+	"use es6";
+
+	var React = __webpack_require__(147);
+
+	var Suggestion = React.createClass({displayName: "Suggestion",
+	  render: function() {
+
+	    return (
+	      React.createElement("li", null, this.props.value)
+	    )
+	  }
+	});
+
+	module.exports = Suggestion;
+
+/***/ },
+/* 205 */
+/***/ function(module, exports, __webpack_require__) {
+
+	"use es6";
+
 	var request = __webpack_require__(177);
 	var Promise = __webpack_require__(180).Promise;
 
@@ -26881,7 +26956,7 @@
 	module.exports = CoordinateFetcher;
 
 /***/ },
-/* 203 */
+/* 206 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use es6";

@@ -7,6 +7,8 @@ var Store = require('./stores/Store');
 var ActionCreator = require('./actions/ActionCreator');
 
 var EstimatesTable = require('./components/EstimatesTable');
+var SuggestionInput = require('./components/SuggestionInput');
+var SuggestionList = require('./components/SuggestionList');
 
 var CoordinateFetcher = require('./data/CoordinateFetcher');
 var EstimatesFetcher = require('./data/EstimatesFetcher');
@@ -141,6 +143,8 @@ var App = React.createClass({
         <input className="address-input" type="text" placeholder="Start Address" onChange={this.handleStartChange} />
         <input className="address-input" type="text" placeholder="End Address" onChange={this.handleEndChange} />
         <button className="get-estimate-button" onClick={this.fetchLocationAutocompleteData}>Get Estimates</button>
+        <SuggestionInput input={this.state.input}/>
+        <SuggestionList suggestions={this.state.locationAutocompleteData}/>
         <EstimatesTable className="estimates-table" estimates={this.state.combinedData} />
         {startAddressMessage}
         {endAddressMessage}
