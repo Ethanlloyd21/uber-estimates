@@ -14,7 +14,8 @@ var SuggestionInput = React.createClass({
         value={this.props.input} 
         onFocus={this.props.onFocus} 
         onBlur={this.props.onFocus}
-        onKeyDown={this.props.onInputKeyDown}>
+        onKeyDown={this.props.onInputKeyDown}
+        onChange={this.props.onChange}>
       </input>
     )
   }

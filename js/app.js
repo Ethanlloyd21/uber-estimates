@@ -32,7 +32,7 @@ var App = React.createClass({
           duration: null,
           distance: null,
           locationAutocompleteData: [],
-          input: "251 Willow Ave",
+          input: null,
           isHidden: true,
           activeSuggestionIndex: 0  
       };
@@ -125,6 +125,15 @@ var App = React.createClass({
     });
   },
 
+  handleSuggestionOnChange: function(event) {
+    ActionCreator.getLocationAutocompleteData(event.target.value);
+
+    this.setState({
+      locationAutocompleteData: Store.getLocationAutocompleteData(),
+      input: event.target.value
+    });
+  },
+
   handleSuggestionInputFocus: function() {
     this.setState({
       isHidden: false
@@ -161,12 +170,15 @@ var App = React.createClass({
         });
         break;
       case 13: // ENTER
-        event.preventDefault();
-        this.handleSuggestionOnClick(event);
+        var locationAutocompleteData = this.state.locationAutocompleteData;
+        this.setState({
+          input: locationAutocompleteData[this.state.activeSuggestionIndex].description
+        })
         break;
       case 9: // TAB
         break;
       case 27: // ESC
+        this.handleSuggestionInputBlur();
         break;
       default:
         break;
@@ -186,8 +198,6 @@ var App = React.createClass({
       var endAddressMessage = <div className="formatted-address">Formatted End Address: {this.state.formattedEndAddress}</div>;
     }
 
-    console.log(this.state);
-
     return (
       <div>
         <input className="address-input" type="text" placeholder="Start Address" onChange={this.handleStartChange} />
@@ -198,7 +208,8 @@ var App = React.createClass({
             input={this.state.input} 
             onFocus={this.handleSuggestionInputFocus} 
             onBlur={this.handleSuggestionInputBlur}
-            onInputKeyDown={this.onInputKeyDown} />
+            onInputKeyDown={this.onInputKeyDown} 
+            onChange={this.handleSuggestionOnChange}/>
           <SuggestionList 
             suggestions={this.state.locationAutocompleteData} 
             isHidden={this.state.isHidden} 

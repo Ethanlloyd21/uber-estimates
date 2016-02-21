@@ -78,7 +78,7 @@
 	          duration: null,
 	          distance: null,
 	          locationAutocompleteData: [],
-	          input: "251 Willow Ave",
+	          input: null,
 	          isHidden: true,
 	          activeSuggestionIndex: 0  
 	      };
@@ -171,6 +171,15 @@
 	    });
 	  },
 
+	  handleSuggestionOnChange: function(event) {
+	    ActionCreator.getLocationAutocompleteData(event.target.value);
+
+	    this.setState({
+	      locationAutocompleteData: Store.getLocationAutocompleteData(),
+	      input: event.target.value
+	    });
+	  },
+
 	  handleSuggestionInputFocus: function() {
 	    this.setState({
 	      isHidden: false
@@ -207,11 +216,15 @@
 	        });
 	        break;
 	      case 13: // ENTER
-	        event.preventDefault();
+	        var locationAutocompleteData = this.state.locationAutocompleteData;
+	        this.setState({
+	          input: locationAutocompleteData[this.state.activeSuggestionIndex].description
+	        })
 	        break;
 	      case 9: // TAB
 	        break;
 	      case 27: // ESC
+	        this.handleSuggestionInputBlur();
 	        break;
 	      default:
 	        break;
@@ -231,8 +244,6 @@
 	      var endAddressMessage = React.createElement("div", {className: "formatted-address"}, "Formatted End Address: ", this.state.formattedEndAddress);
 	    }
 
-	    console.log(this.state);
-
 	    return (
 	      React.createElement("div", null, 
 	        React.createElement("input", {className: "address-input", type: "text", placeholder: "Start Address", onChange: this.handleStartChange}), 
@@ -243,7 +254,8 @@
 	            input: this.state.input, 
 	            onFocus: this.handleSuggestionInputFocus, 
 	            onBlur: this.handleSuggestionInputBlur, 
-	            onInputKeyDown: this.onInputKeyDown}), 
+	            onInputKeyDown: this.onInputKeyDown, 
+	            onChange: this.handleSuggestionOnChange}), 
 	          React.createElement(SuggestionList, {
 	            suggestions: this.state.locationAutocompleteData, 
 	            isHidden: this.state.isHidden, 
@@ -26928,7 +26940,8 @@
 	        value: this.props.input, 
 	        onFocus: this.props.onFocus, 
 	        onBlur: this.props.onFocus, 
-	        onKeyDown: this.props.onInputKeyDown}
+	        onKeyDown: this.props.onInputKeyDown, 
+	        onChange: this.props.onChange}
 	      )
 	    )
 	  }
