@@ -140,7 +140,7 @@ var App = React.createClass({
   handleSuggestionOnClick: function(event) {
     event.persist();
     this.setState({
-      input: event.target.value
+      input: event.target.outerText
     });
   },
 
@@ -202,7 +202,7 @@ var App = React.createClass({
             suggestions={this.state.locationAutocompleteData} 
             isHidden={this.state.isHidden} 
             activeSuggestionIndex={this.state.activeSuggestionIndex} 
-            handleSuggestionOnClick={this.state.handleSuggestionOnClick} />
+            handleSuggestionOnClick={this.handleSuggestionOnClick} />
         </div>
         <EstimatesTable className="estimates-table" estimates={this.state.combinedData} />
         {startAddressMessage}

@@ -8,7 +8,7 @@ var Suggestion = React.createClass({
     return (
       <li 
         className={this.props.className}
-        onSelect={this.props.handleSuggestionOnClick}>{this.props.value}</li>
+        onClick={this.props.handleSuggestionOnClick}>{this.props.value}</li>
     )
   }
 });

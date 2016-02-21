@@ -172,9 +172,21 @@
 	  },
 
 	  handleSuggestionInputFocus: function() {
-	    var isHidden = !this.state.isHidden;
 	    this.setState({
-	      isHidden: isHidden
+	      isHidden: false
+	    });
+	  },
+
+	  handleSuggestionInputBlur: function() {
+	    this.setState({
+	      isHidden: true
+	    });
+	  },
+
+	  handleSuggestionOnClick: function(event) {
+	    event.persist();
+	    this.setState({
+	      input: event.target.outerText
 	    });
 	  },
 
@@ -227,8 +239,16 @@
 	        React.createElement("input", {className: "address-input", type: "text", placeholder: "End Address", onChange: this.handleEndChange}), 
 	        React.createElement("button", {className: "get-estimate-button", onClick: this.fetchLocationAutocompleteData}, "Get Estimates"), 
 	        React.createElement("div", {className: "geosuggest"}, 
-	          React.createElement(SuggestionInput, {input: this.state.input, onFocus: this.handleSuggestionInputFocus, onInputKeyDown: this.onInputKeyDown}), 
-	          React.createElement(SuggestionList, {suggestions: this.state.locationAutocompleteData, isHidden: this.state.isHidden, activeSuggestionIndex: this.state.activeSuggestionIndex})
+	          React.createElement(SuggestionInput, {
+	            input: this.state.input, 
+	            onFocus: this.handleSuggestionInputFocus, 
+	            onBlur: this.handleSuggestionInputBlur, 
+	            onInputKeyDown: this.onInputKeyDown}), 
+	          React.createElement(SuggestionList, {
+	            suggestions: this.state.locationAutocompleteData, 
+	            isHidden: this.state.isHidden, 
+	            activeSuggestionIndex: this.state.activeSuggestionIndex, 
+	            handleSuggestionOnClick: this.handleSuggestionOnClick})
 	        ), 
 	        React.createElement(EstimatesTable, {className: "estimates-table", estimates: this.state.combinedData}), 
 	        startAddressMessage, 
@@ -26936,7 +26956,12 @@
 	      } else {
 	        var className = "geosuggest-item";
 	      }
-	      suggestions.push(React.createElement(Suggestion, {className: className, value: suggestion.description}));
+	      suggestions.push(
+	        React.createElement(Suggestion, {
+	          className: className, 
+	          value: suggestion.description, 
+	          handleSuggestionOnClick: this.props.handleSuggestionOnClick})
+	      );
 	      counter++;
 	    }.bind(this));
 	    return suggestions;
@@ -26972,7 +26997,9 @@
 	  render: function() {
 
 	    return (
-	      React.createElement("li", {className: this.props.className}, this.props.value)
+	      React.createElement("li", {
+	        className: this.props.className, 
+	        onClick: this.props.handleSuggestionOnClick}, this.props.value)
 	    )
 	  }
 	});
