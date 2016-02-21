@@ -162,6 +162,7 @@ var App = React.createClass({
         break;
       case 13: // ENTER
         event.preventDefault();
+        this.handleSuggestionOnClick(event);
         break;
       case 9: // TAB
         break;
