@@ -6,7 +6,10 @@ var EventEmitter = require('events').EventEmitter;
 var assign = require('object-assign');
 
 var CHANGE_EVENT = 'change';
-var _locationAutocompleteData = [];
+var _startLocationAutocompleteData = [];
+var _endLocationAutocompleteData = [];
+var _startLocationCoordinates = [];
+var _endLocationCoordinates = [];
 
 /**
  * Set the values for playerSalaries that will be used
@@ -14,8 +17,20 @@ var _locationAutocompleteData = [];
  */
 
  
-function setLocationAutocompleteData (locationAutocompleteData) {
-  _locationAutocompleteData = locationAutocompleteData;
+function setStartLocationAutocompleteData (startLocationAutocompleteData) {
+  _startLocationAutocompleteData = startLocationAutocompleteData;
+}
+
+function setEndLocationAutocompleteData (endLocationAutocompleteData) {
+  _endLocationAutocompleteData = endLocationAutocompleteData;
+}
+
+function setStartLocationCoordinates (coordinates) {
+  _startLocationCoordinates = coordinates;
+}
+
+function setEndLocationCoordinates (coordinates) {
+  _endLocationCoordinates = coordinates;
 }
 
 var Store = assign({}, EventEmitter.prototype, {
@@ -48,17 +63,42 @@ var Store = assign({}, EventEmitter.prototype, {
   /**
    * Return the value for playerSalaries.
    */
-  getLocationAutocompleteData: function () {
-    return _locationAutocompleteData;
+  getStartLocationAutocompleteData: function () {
+    return _startLocationAutocompleteData;
+  },
+
+  getEndLocationAutocompleteData: function() {
+    return _endLocationAutocompleteData;
+  },
+
+  getStartLocationCoordinates: function() {
+    return _startLocationCoordinates;
+  },
+
+  getEndLocationCoordinates: function() {
+    return _endLocationCoordinates;
   }
+
 });
 
 Store.dispatchToken = Dispatcher.register(function (payload) {
   var action = payload.action;
 
   switch (action.actionType) {
-    case ActionConstants.GET_LOCATION_AUTOCOMPLETE:
-      setLocationAutocompleteData(action.locationAutocompleteData);
+    case ActionConstants.GET_START_LOCATION_AUTOCOMPLETE:
+      setStartLocationAutocompleteData(action.locationAutocompleteData);
+      break;
+
+    case ActionConstants.GET_END_LOCATION_AUTOCOMPLETE:
+      setEndLocationAutocompleteData(action.locationAutocompleteData);
+      break;
+
+    case ActionConstants.GET_START_LOCATION_COORDINATES:
+      setStartLocationCoordinates(action.coordinateData);
+      break;
+
+    case ActionConstants.GET_END_LOCATION_COORDINATES:
+      setEndLocationCoordinates(action.coordinateData);
       break;
 
     default:

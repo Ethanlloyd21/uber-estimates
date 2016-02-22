@@ -16,6 +16,7 @@ var SuggestionList = React.createClass({
       }
       suggestions.push(
         <Suggestion 
+          key={suggestion.description}
           className={className} 
           value={suggestion.description} 
           handleSuggestionOnClick={this.props.handleSuggestionOnClick} />

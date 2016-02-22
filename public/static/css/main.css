@@ -3,13 +3,12 @@
 }
 
 .address-input {
-  padding: 9px; 
-  border: solid 1px #E5E5E5; 
-  outline: 0; 
-  font: normal 10px/100% Verdana, Tahoma, sans-serif; 
-  width: 300px; 
-  background: #FFFFFF;
-  margin-bottom: 9px; 
+  width: 100%;
+  border: 2px solid transparent;
+  box-shadow: 0 0 1px #3d464d;
+  padding: .5em 1em;
+  -webkit-transition: border 0.2s, box-shadow 0.2s;
+          transition: border 0.2s, box-shadow 0.2s;
 }
 
 .address-input:focus {
@@ -91,10 +90,12 @@ tbody:hover > tr:hover td {
   font-size: 18px;
   font-size: 1rem;
   position: relative;
-  width: 50%;
+  width: 200px;
   margin: 1em auto;
   text-align: left;
+  margin-bottom: 10px;
 }
+
 .geosuggest__input {
   width: 100%;
   border: 2px solid transparent;
@@ -109,6 +110,7 @@ tbody:hover > tr:hover td {
 }
 .geosuggest__suggests {
   position: absolute;
+  width: 223px;
   top: 100%;
   left: 0;
   right: 0;
@@ -140,15 +142,15 @@ tbody:hover > tr:hover td {
   padding: .5em .65em;
   cursor: pointer;
 }
-.geosuggest-item:hover,
-.geosuggest-item:focus {
-  background: #f5f5f5;
-}
-.geosuggest-item--active {
-  background: #267dc0;
-  color: #fff;
-}
-.geosuggest-item--active:hover,
-.geosuggest-item--active:focus {
-  background: #ccc;
-}
+  .geosuggest-item:hover,
+  .geosuggest-item:focus {
+    background: #f5f5f5;
+  }
+  .geosuggest-item--active {
+    background: #267dc0;
+    color: #fff;
+  }
+  .geosuggest-item--active:hover,
+  .geosuggest-item--active:focus {
+    background: #ccc;
+  }

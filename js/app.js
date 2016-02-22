@@ -32,19 +32,43 @@ var App = React.createClass({
           distance: null,
           startAddressLocationAutocompleteData: [],
           endAddressLocationAutocompleteData: [], 
-          activeStartAddressSuggestion: null,
-          activeEndAddressSuggestion: null,
           activeStartAddressSuggestionIndex: 0,
-          activeEndAddressSuggestionIndex: 0
+          activeEndAddressSuggestionIndex: 0,
+          isStartAddressSuggestionsHidden: true,
+          isEndAddressSuggestionsHidden: true
       };
   },
 
   componentWillMount() {
-      ActionCreator.getLocationAutocompleteData(this.state.activeStartAddressSuggestion);
+      ActionCreator.getStartLocationAutocompleteData(this.state.startAddress);
+      ActionCreator.getEndLocationAutocompleteData(this.state.endAddress);
 
       this.setState({
-        startAddressLocationAutocompleteData: Store.getLocationAutocompleteData()
+        startAddressLocationAutocompleteData: Store.getStartLocationAutocompleteData(),
+        endAddressLocationAutocompleteData: Store.getEndLocationAutocompleteData()
       });
+  },
+
+  fetchStartLocationCoordinates: function() {
+    ActionCreator.getStartLocationCoordinates(this.state.startAddress);
+    var coordinateData = Store.getStartLocationCoordinates();
+
+    this.setState({
+      formattedStartAddress: coordinateData.results[0].geometry.formatted_address,
+      startLatitude = coordinates.results[0].geometry.location.lat,
+      startLongitude = coordinates.results[0].geometry.location.lng
+    });
+  },
+
+  fetchEndLocationCoordinates: function() {
+    ActionCreator.getEndLocationCoordinates(this.state.endAddress);
+    var coordinateData = Store.getEndLocationCoordinates();
+
+    this.setState({
+      formattedEndAddress: coordinateData.results[0].geometry.formatted_address,
+      endLatitude = coordinates.results[0].geometry.location.lat,
+      endLongitude = coordinates.results[0].geometry.location.lng
+    });
   },
 
   fetchData: function() {
@@ -106,29 +130,18 @@ var App = React.createClass({
     }
   },
 
-  handleStartChange: function(e) {
-    this.state.startAddress = e.target.value;
-  },
-
-  handleEndChange: function(e) {
-    this.state.endAddress = e.target.value;
-  },
-
-  handleButtonClick: function() {
-    this.fetchData();
-  },
-
   handleSuggestionOnChange: function(event, type) {
-    ActionCreator.getLocationAutocompleteData(event.target.value);
     if (type == "startAddress") {
+      ActionCreator.getStartLocationAutocompleteData(event.target.value);
       this.setState({
-        startAddressLocationAutocompleteData: Store.getLocationAutocompleteData(),
-        activeStartAddressSuggestion: event.target.value
+        startAddressLocationAutocompleteData: Store.getStartLocationAutocompleteData(),
+        startAddress: event.target.value
       });
     } else {
+      ActionCreator.getEndLocationAutocompleteData(event.target.value);
       this.setState({
-        endAddressLocationAutocompleteData: Store.getLocationAutocompleteData(),
-        activeEndAddressSuggestion: event.target.value
+        endAddressLocationAutocompleteData: Store.getEndLocationAutocompleteData(),
+        endAddress: event.target.value
       });
     }
   },
@@ -137,13 +150,37 @@ var App = React.createClass({
     event.persist();
     if (type == "startAddress") {
       this.setState({
-        activeStartAddressSuggestion: event.target.outerText
+        startAddress: event.target.outerText
       });
     } else {
       this.setState({
-        activeEndAddressSuggestion: event.target.outerText
+        endAddress: event.target.outerText
       });
     }
+  },
+
+  handleStartAddressSuggestionsOnFocus: function() {
+    this.setState({
+      isStartAddressSuggestionsHidden: false
+    });
+  },
+
+  handleStartAddressSuggestionsOnBlur: function() {
+    this.setState({
+      isStartAddressSuggestionsHidden: true
+    });
+  },
+
+  handleEndAddressSuggestionsOnFocus: function() {
+    this.setState({
+      isEndAddressSuggestionsHidden: false
+    });
+  },
+
+  handleEndAddressSuggestionsOnBlur: function() {
+    this.setState({
+      isEndAddressSuggestionsHidden: true
+    });
   },
 
   onInputKeyDown: function(event, type) {
@@ -151,12 +188,22 @@ var App = React.createClass({
       case 40: // DOWN
         event.preventDefault();
         if (type == "startAddress") {
-          var newActiveSuggestionIndex = this.state.activeStartAddressSuggestionIndex + 1;
+          if (this.state.activeStartAddressSuggestionIndex < this.state.startAddressLocationAutocompleteData.length - 1) {
+            var newActiveSuggestionIndex = this.state.activeStartAddressSuggestionIndex + 1; 
+          } else {
+            var newActiveSuggestionIndex = this.state.activeStartAddressSuggestionIndex;
+          }
+          
           this.setState({
             activeStartAddressSuggestionIndex: newActiveSuggestionIndex
           });
         } else {
-          var newActiveSuggestionIndex = this.state.activeEndAddressSuggestionIndex + 1;
+          if (this.state.activeEndAddressSuggestionIndex > 0) {
+            var newActiveSuggestionIndex = this.state.activeEndAddressSuggestionIndex + 1; 
+          } else {
+            var newActiveSuggestionIndex = this.state.activeEndAddressSuggestionIndex;
+          }
+          
           this.setState({
             activeEndAddressSuggestionIndex: newActiveSuggestionIndex
           });
@@ -165,12 +212,20 @@ var App = React.createClass({
       case 38: // UP
         event.preventDefault();
         if (type == "startAddress") {
-          var newActiveSuggestionIndex = this.state.activeStartAddressSuggestionIndex - 1;
+          if (this.state.activeStartAddressSuggestionIndex > 0) {
+            var newActiveSuggestionIndex = this.state.activeStartAddressSuggestionIndex - 1; 
+          } else {
+            var newActiveSuggestionIndex = this.state.activeStartAddressSuggestionIndex;
+          }
           this.setState({
             activeStartAddressSuggestionIndex: newActiveSuggestionIndex
           });
         } else {
-          var newActiveSuggestionIndex = this.state.activeEndAddressSuggestionIndex - 1;
+          if (this.state.activeEndAddressSuggestionIndex < this.state.endAddressLocationAutocompleteData.length - 1) {
+            var newActiveSuggestionIndex = this.state.activeEndAddressSuggestionIndex - 1; 
+          } else {
+            var newActiveSuggestionIndex = this.state.activeEndAddressSuggestionIndex;
+          }
           this.setState({
             activeEndAddressSuggestionIndex: newActiveSuggestionIndex
           });
@@ -180,20 +235,20 @@ var App = React.createClass({
         if (type == "startAddress") {
           var locationAutocompleteData = this.state.startAddressLocationAutocompleteData;
           this.setState({
-            startAddress: locationAutocompleteData[this.state.activeStartAddressSuggestionIndex].description
+            startAddress: locationAutocompleteData[this.state.activeStartAddressSuggestionIndex].description,
+            isStartAddressSuggestionsHidden: true
           });
         } else {
           var locationAutocompleteData = this.state.endAddressLocationAutocompleteData;
           this.setState({
-            endAddress: locationAutocompleteData[this.state.activeEndAddressSuggestionIndex].description
+            endAddress: locationAutocompleteData[this.state.activeEndAddressSuggestionIndex].description,
+            isEndAddressSuggestionsHidden: true
           });
         }
+
+        this.fetchData();
         break;
-      case 9: // TAB
-        break;
-      case 27: // ESC
-        this.handleSuggestionInputBlur();
-        break;
+
       default:
         break;
     }
@@ -218,21 +273,26 @@ var App = React.createClass({
           input={this.state.startAddress} 
           placeholder={"Start Address"}
           type={"startAddress"}
+          onFocus={this.handleStartAddressSuggestionsOnFocus}
+          onBlur={this.handleStartAddressSuggestionsOnBlur}
           onInputKeyDown={this.onInputKeyDown} 
           onChange={this.handleSuggestionOnChange}
           suggestions={this.state.startAddressLocationAutocompleteData} 
+          isHidden={this.state.isStartAddressSuggestionsHidden}
           activeSuggestionIndex={this.state.activeStartAddressSuggestionIndex} 
           handleSuggestionOnClick={this.handleSuggestionOnClick} />
         <Geosuggestion 
           input={this.state.endAddress} 
           placeholder={"End Address"}
           type={"endAddress"}
+          onFocus={this.handleEndAddressSuggestionsOnFocus}
+          onBlur={this.handleEndAddressSuggestionsOnBlur}
           onInputKeyDown={this.onInputKeyDown} 
           onChange={this.handleSuggestionOnChange}
           suggestions={this.state.endAddressLocationAutocompleteData} 
+          isHidden={this.state.isEndAddressSuggestionsHidden}
           activeSuggestionIndex={this.state.activeEndAddressSuggestionIndex} 
           handleSuggestionOnClick={this.handleSuggestionOnClick} />
-        <button className="get-estimate-button" onClick={this.fetchLocationAutocompleteData}>Get Estimates</button>
         <EstimatesTable className="estimates-table" estimates={this.state.combinedData} />
         {startAddressMessage}
         {endAddressMessage}
