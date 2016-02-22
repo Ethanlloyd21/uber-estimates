@@ -1,5 +1,6 @@
 #uber-estimates {
   width: 300px;
+  height: 200px;
 }
 
 .address-input {
@@ -34,17 +35,51 @@
   border: solid 1px #E5E5E5; 
   outline: 0; 
   font: normal 10px/100% Verdana, Tahoma, sans-serif; 
-  width: 300px; 
+  width: 280px; 
   background: #FFFFFF;
   margin-bottom: 9px;
   color: red;
 }
 
+.error {
+  padding: 9px; 
+  border: solid 1px #E5E5E5; 
+  outline: 0; 
+  font: normal 10px/100% Verdana, Tahoma, sans-serif; 
+  width: 280px; 
+  background: #FFFFFF;
+  margin-bottom: 9px;
+  color: red;
+}
+
+.distance {
+  padding: 9px; 
+  border: solid 1px #E5E5E5; 
+  outline: 0; 
+  font: normal 10px/100% Verdana, Tahoma, sans-serif; 
+  width: 130px;
+  background: #FFFFFF;
+  margin-bottom: 9px;
+  color: blue;
+  display: inline-block;
+}
+
+.duration {
+  padding: 9px; 
+  border: solid 1px #E5E5E5; 
+  outline: 0; 
+  font: normal 10px/100% Verdana, Tahoma, sans-serif; 
+  width: 130px; 
+  background: #FFFFFF;
+  margin-bottom: 9px;
+  color: blue;
+  display: inline-block;
+}
+
 table {
   font-family: 'Serif';
-  margin: 0px auto;
+  width: 100%;
   border-collapse: collapse;
-  box-shadow: 0px 0px 20px rgba(0, 0, 0, 0.1), 0px 10px 20px rgba(0, 0, 0, 0.05), 0px 20px 20px rgba(0, 0, 0, 0.05), 0px 30px 20px rgba(0, 0, 0, 0.05);
   background: #FFFFFF;
   margin-bottom: 10px;
 }
@@ -87,30 +122,33 @@ tbody:hover > tr:hover td {
  * The geosuggest module
  */
 .geosuggest {
-  font-size: 18px;
+  font-size: 12px;
   font-size: 1rem;
   position: relative;
   width: 200px;
-  margin: 1em auto;
   text-align: left;
-  margin-bottom: 10px;
+  margin-bottom: 20px;
+  margin-left: 38px;
 }
 
 .geosuggest__input {
-  width: 100%;
+  width: 220px;
+  font-size: 12px;
+  height: 25px;
   border: 2px solid transparent;
   box-shadow: 0 0 1px #3d464d;
-  padding: .5em 1em;
   -webkit-transition: border 0.2s, box-shadow 0.2s;
           transition: border 0.2s, box-shadow 0.2s;
 }
 .geosuggest__input:focus {
   border-color: #267dc0;
   box-shadow: 0 0 0 transparent;
+  font-size: 12px;
 }
 .geosuggest__suggests {
+  font-size: 12px;
   position: absolute;
-  width: 223px;
+  width: 220px;
   top: 100%;
   left: 0;
   right: 0;
@@ -137,8 +175,7 @@ tbody:hover > tr:hover td {
  * A geosuggest item
  */
 .geosuggest-item {
-  font-size: 18px;
-  font-size: 1rem;
+  font-size: 12px;
   padding: .5em .65em;
   cursor: pointer;
 }
@@ -149,8 +186,18 @@ tbody:hover > tr:hover td {
   .geosuggest-item--active {
     background: #267dc0;
     color: #fff;
+    font-size: 12px;
+    padding: .5em .65em;
   }
   .geosuggest-item--active:hover,
   .geosuggest-item--active:focus {
     background: #ccc;
+  }
+
+  #loading {
+    position: absolute;
+    margin: 0px auto;
+    top: 50px;
+    right: 100px;
+    height: 100px;
   }

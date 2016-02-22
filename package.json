@@ -26,9 +26,9 @@
     "reactable": "latest",
     "deepcopy": "latest",
     "flux": "latest",
-    "object-assign": "latest",
     "events": "^1.0.2", 
-    "express": "latest"
+    "react-loading": "latest",
+    "object-assign": "latest"
   },
   "devDependencies": {
     "jsx-loader": "^0.12.2",
