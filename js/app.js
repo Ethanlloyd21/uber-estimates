@@ -49,28 +49,6 @@ var App = React.createClass({
       });
   },
 
-  fetchStartLocationCoordinates: function() {
-    ActionCreator.getStartLocationCoordinates(this.state.startAddress);
-    var coordinateData = Store.getStartLocationCoordinates();
-
-    this.setState({
-      formattedStartAddress: coordinateData.results[0].geometry.formatted_address,
-      startLatitude = coordinates.results[0].geometry.location.lat,
-      startLongitude = coordinates.results[0].geometry.location.lng
-    });
-  },
-
-  fetchEndLocationCoordinates: function() {
-    ActionCreator.getEndLocationCoordinates(this.state.endAddress);
-    var coordinateData = Store.getEndLocationCoordinates();
-
-    this.setState({
-      formattedEndAddress: coordinateData.results[0].geometry.formatted_address,
-      endLatitude = coordinates.results[0].geometry.location.lat,
-      endLongitude = coordinates.results[0].geometry.location.lng
-    });
-  },
-
   fetchData: function() {
     // Uber Hacky data fetching
 
@@ -198,7 +176,7 @@ var App = React.createClass({
             activeStartAddressSuggestionIndex: newActiveSuggestionIndex
           });
         } else {
-          if (this.state.activeEndAddressSuggestionIndex > 0) {
+          if (this.state.activeEndAddressSuggestionIndex < this.state.endAddressLocationAutocompleteData.length - 1) {
             var newActiveSuggestionIndex = this.state.activeEndAddressSuggestionIndex + 1; 
           } else {
             var newActiveSuggestionIndex = this.state.activeEndAddressSuggestionIndex;
@@ -221,7 +199,7 @@ var App = React.createClass({
             activeStartAddressSuggestionIndex: newActiveSuggestionIndex
           });
         } else {
-          if (this.state.activeEndAddressSuggestionIndex < this.state.endAddressLocationAutocompleteData.length - 1) {
+          if (this.state.activeEndAddressSuggestionIndex > 0) {
             var newActiveSuggestionIndex = this.state.activeEndAddressSuggestionIndex - 1; 
           } else {
             var newActiveSuggestionIndex = this.state.activeEndAddressSuggestionIndex;

@@ -52,10 +52,10 @@
 	var Store = __webpack_require__(159);
 	var ActionCreator = __webpack_require__(167);
 
-	var EstimatesTable = __webpack_require__(185);
-	var Geosuggestion = __webpack_require__(202);
+	var EstimatesTable = __webpack_require__(186);
+	var Geosuggestion = __webpack_require__(203);
 
-	var CoordinateFetcher = __webpack_require__(206);
+	var CoordinateFetcher = __webpack_require__(185);
 	var EstimatesFetcher = __webpack_require__(207);
 	var LocationAutocompleteFetcher = __webpack_require__(176);
 
@@ -222,7 +222,7 @@
 	            activeStartAddressSuggestionIndex: newActiveSuggestionIndex
 	          });
 	        } else {
-	          if (this.state.activeEndAddressSuggestionIndex > 0) {
+	          if (this.state.activeEndAddressSuggestionIndex < this.state.endAddressLocationAutocompleteData.length - 1) {
 	            var newActiveSuggestionIndex = this.state.activeEndAddressSuggestionIndex + 1; 
 	          } else {
 	            var newActiveSuggestionIndex = this.state.activeEndAddressSuggestionIndex;
@@ -245,7 +245,7 @@
 	            activeStartAddressSuggestionIndex: newActiveSuggestionIndex
 	          });
 	        } else {
-	          if (this.state.activeEndAddressSuggestionIndex < this.state.endAddressLocationAutocompleteData.length - 1) {
+	          if (this.state.activeEndAddressSuggestionIndex > 0) {
 	            var newActiveSuggestionIndex = this.state.activeEndAddressSuggestionIndex - 1; 
 	          } else {
 	            var newActiveSuggestionIndex = this.state.activeEndAddressSuggestionIndex;
@@ -19945,6 +19945,8 @@
 	var CHANGE_EVENT = 'change';
 	var _startLocationAutocompleteData = [];
 	var _endLocationAutocompleteData = [];
+	var _startLocationCoordinates = [];
+	var _endLocationCoordinates = [];
 
 	/**
 	 * Set the values for playerSalaries that will be used
@@ -19958,6 +19960,14 @@
 
 	function setEndLocationAutocompleteData (endLocationAutocompleteData) {
 	  _endLocationAutocompleteData = endLocationAutocompleteData;
+	}
+
+	function setStartLocationCoordinates (coordinates) {
+	  _startLocationCoordinates = coordinates;
+	}
+
+	function setEndLocationCoordinates (coordinates) {
+	  _endLocationCoordinates = coordinates;
 	}
 
 	var Store = assign({}, EventEmitter.prototype, {
@@ -19996,7 +20006,16 @@
 
 	  getEndLocationAutocompleteData: function() {
 	    return _endLocationAutocompleteData;
+	  },
+
+	  getStartLocationCoordinates: function() {
+	    return _startLocationCoordinates;
+	  },
+
+	  getEndLocationCoordinates: function() {
+	    return _endLocationCoordinates;
 	  }
+
 	});
 
 	Store.dispatchToken = Dispatcher.register(function (payload) {
@@ -20009,6 +20028,14 @@
 
 	    case ActionConstants.GET_END_LOCATION_AUTOCOMPLETE:
 	      setEndLocationAutocompleteData(action.locationAutocompleteData);
+	      break;
+
+	    case ActionConstants.GET_START_LOCATION_COORDINATES:
+	      setStartLocationCoordinates(action.coordinateData);
+	      break;
+
+	    case ActionConstants.GET_END_LOCATION_COORDINATES:
+	      setEndLocationCoordinates(action.coordinateData);
 	      break;
 
 	    default:
@@ -20413,7 +20440,9 @@
 
 	module.exports = {
 	  GET_START_LOCATION_AUTOCOMPLETE: "GET_START_LOCATION_AUTOCOMPLETE",
-	  GET_END_LOCATION_AUTOCOMPLETE: "GET_END_LOCATION_AUTOCOMPLETE"
+	  GET_END_LOCATION_AUTOCOMPLETE: "GET_END_LOCATION_AUTOCOMPLETE",
+	  GET_START_LOCATION_COORDINATES: "GET_START_LOCATION_COORDINATES",
+	  GET_END_LOCATION_COORDINATES: "GET_END_LOCATION_COORDINATES"
 	};
 
 /***/ },
@@ -20727,6 +20756,7 @@
 	var Dispatcher = __webpack_require__(160);
 	var DeepCopy = __webpack_require__(168);
 	var LocationAutocompleteFetcher = __webpack_require__(176);
+	var CoordinateFetcher = __webpack_require__(185);
 
 	var ActionConstants = __webpack_require__(165);
 
@@ -20750,6 +20780,28 @@
 	          locationAutocompleteData: DeepCopy(locationAutocompleteData.predictions)
 	        });
 	      });
+	  },
+
+	  getStartLocationCoordinates: function(startLocation) {
+	    CoordinateFetcher
+	      .fetchCoordinates(startLocation)
+	      .then(function (coordinates) {
+	        Dispatcher.handleViewAction({
+	          actionType: ActionConstants.GET_START_LOCATION_COORDINATES,
+	          coordinateData: DeepCopy(coordinates)
+	        });
+	    });
+	  },
+
+	  getEndLocationCoordinates: function(endLocation) {
+	    CoordinateFetcher
+	      .fetchCoordinates(endLocation)
+	      .then(function (coordinates) {
+	        Dispatcher.handleViewAction({
+	          actionType: ActionConstants.GET_END_LOCATION_COORDINATES,
+	          coordinateData: DeepCopy(coordinates)
+	        });
+	    });
 	  },
 	};
 
@@ -25396,8 +25448,43 @@
 
 	"use es6";
 
+	var request = __webpack_require__(177);
+	var Promise = __webpack_require__(180).Promise;
+
+	var CoordinateFetcher = {
+	  geocodeApi: "https://maps.googleapis.com/maps/api/geocode/json",
+	  key: "AIzaSyCqY_GY36jbVcoCF8m-SNNqgLjKizIf7rQ",
+
+	  getUrl: function(address) {
+	    return this.geocodeApi + "?" + "address=" + encodeURIComponent(address) + "&key=" + this.key;
+	  },
+
+	  fetchCoordinates: function(address) {
+	    var url = this.getUrl(address);
+	    return new Promise(function (resolve, reject) {
+	      request
+	        .get(url)
+	        .end(function (err, res) {
+	          if (res.status === 404) {
+	            reject();
+	          } else {
+	            resolve(res.body);
+	          }
+	      });
+	    });
+	  },
+	};
+
+	module.exports = CoordinateFetcher;
+
+/***/ },
+/* 186 */
+/***/ function(module, exports, __webpack_require__) {
+
+	"use es6";
+
 	var React = __webpack_require__(147);
-	var Reactable = __webpack_require__(186);
+	var Reactable = __webpack_require__(187);
 	var Table = Reactable.Table;
 
 	var EstimatesTable = React.createClass({displayName: "EstimatesTable",
@@ -25436,7 +25523,7 @@
 	module.exports = EstimatesTable;
 
 /***/ },
-/* 186 */
+/* 187 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -25451,21 +25538,21 @@
 
 	var _react2 = _interopRequireDefault(_react);
 
-	var _reactableTable = __webpack_require__(187);
+	var _reactableTable = __webpack_require__(188);
 
-	var _reactableTr = __webpack_require__(195);
+	var _reactableTr = __webpack_require__(196);
 
-	var _reactableTd = __webpack_require__(196);
+	var _reactableTd = __webpack_require__(197);
 
-	var _reactableTh = __webpack_require__(193);
+	var _reactableTh = __webpack_require__(194);
 
-	var _reactableTfoot = __webpack_require__(199);
+	var _reactableTfoot = __webpack_require__(200);
 
-	var _reactableThead = __webpack_require__(192);
+	var _reactableThead = __webpack_require__(193);
 
-	var _reactableSort = __webpack_require__(201);
+	var _reactableSort = __webpack_require__(202);
 
-	var _reactableUnsafe = __webpack_require__(191);
+	var _reactableUnsafe = __webpack_require__(192);
 
 	_react2['default'].Children.children = function (children) {
 	    return _react2['default'].Children.map(children, function (x) {
@@ -25514,7 +25601,7 @@
 
 
 /***/ },
-/* 187 */
+/* 188 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -25539,21 +25626,21 @@
 
 	var _react2 = _interopRequireDefault(_react);
 
-	var _libFilter_props_from = __webpack_require__(188);
+	var _libFilter_props_from = __webpack_require__(189);
 
-	var _libExtract_data_from = __webpack_require__(189);
+	var _libExtract_data_from = __webpack_require__(190);
 
-	var _unsafe = __webpack_require__(191);
+	var _unsafe = __webpack_require__(192);
 
-	var _thead = __webpack_require__(192);
+	var _thead = __webpack_require__(193);
 
-	var _th = __webpack_require__(193);
+	var _th = __webpack_require__(194);
 
-	var _tr = __webpack_require__(195);
+	var _tr = __webpack_require__(196);
 
-	var _tfoot = __webpack_require__(199);
+	var _tfoot = __webpack_require__(200);
 
-	var _paginator = __webpack_require__(200);
+	var _paginator = __webpack_require__(201);
 
 	var Table = (function (_React$Component) {
 	    _inherits(Table, _React$Component);
@@ -26033,7 +26120,7 @@
 
 
 /***/ },
-/* 188 */
+/* 189 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -26069,7 +26156,7 @@
 
 
 /***/ },
-/* 189 */
+/* 190 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -26079,7 +26166,7 @@
 	});
 	exports.extractDataFrom = extractDataFrom;
 
-	var _stringable = __webpack_require__(190);
+	var _stringable = __webpack_require__(191);
 
 	function extractDataFrom(key, column) {
 	    var value;
@@ -26098,7 +26185,7 @@
 
 
 /***/ },
-/* 190 */
+/* 191 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -26114,7 +26201,7 @@
 
 
 /***/ },
-/* 191 */
+/* 192 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -26161,7 +26248,7 @@
 
 
 /***/ },
-/* 192 */
+/* 193 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -26186,11 +26273,11 @@
 
 	var _react2 = _interopRequireDefault(_react);
 
-	var _th = __webpack_require__(193);
+	var _th = __webpack_require__(194);
 
-	var _filterer = __webpack_require__(194);
+	var _filterer = __webpack_require__(195);
 
-	var _libFilter_props_from = __webpack_require__(188);
+	var _libFilter_props_from = __webpack_require__(189);
 
 	var Thead = (function (_React$Component) {
 	    _inherits(Thead, _React$Component);
@@ -26314,7 +26401,7 @@
 
 
 /***/ },
-/* 193 */
+/* 194 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -26339,9 +26426,9 @@
 
 	var _react2 = _interopRequireDefault(_react);
 
-	var _unsafe = __webpack_require__(191);
+	var _unsafe = __webpack_require__(192);
 
-	var _libFilter_props_from = __webpack_require__(188);
+	var _libFilter_props_from = __webpack_require__(189);
 
 	var Th = (function (_React$Component) {
 	    _inherits(Th, _React$Component);
@@ -26378,7 +26465,7 @@
 
 
 /***/ },
-/* 194 */
+/* 195 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -26475,7 +26562,7 @@
 
 
 /***/ },
-/* 195 */
+/* 196 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -26500,11 +26587,11 @@
 
 	var _react2 = _interopRequireDefault(_react);
 
-	var _td = __webpack_require__(196);
+	var _td = __webpack_require__(197);
 
-	var _libTo_array = __webpack_require__(198);
+	var _libTo_array = __webpack_require__(199);
 
-	var _libFilter_props_from = __webpack_require__(188);
+	var _libFilter_props_from = __webpack_require__(189);
 
 	var Tr = (function (_React$Component) {
 	    _inherits(Tr, _React$Component);
@@ -26564,7 +26651,7 @@
 
 
 /***/ },
-/* 196 */
+/* 197 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -26587,11 +26674,11 @@
 
 	var _react2 = _interopRequireDefault(_react);
 
-	var _libIs_react_component = __webpack_require__(197);
+	var _libIs_react_component = __webpack_require__(198);
 
-	var _libStringable = __webpack_require__(190);
+	var _libStringable = __webpack_require__(191);
 
-	var _unsafe = __webpack_require__(191);
+	var _unsafe = __webpack_require__(192);
 
 	var Td = (function (_React$Component) {
 	    _inherits(Td, _React$Component);
@@ -26654,7 +26741,7 @@
 
 
 /***/ },
-/* 197 */
+/* 198 */
 /***/ function(module, exports) {
 
 	// this is a bit hacky - it'd be nice if React exposed an API for this
@@ -26671,7 +26758,7 @@
 
 
 /***/ },
-/* 198 */
+/* 199 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -26692,7 +26779,7 @@
 
 
 /***/ },
-/* 199 */
+/* 200 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -26738,7 +26825,7 @@
 
 
 /***/ },
-/* 200 */
+/* 201 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -26901,7 +26988,7 @@
 
 
 /***/ },
-/* 201 */
+/* 202 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -27000,15 +27087,15 @@
 
 
 /***/ },
-/* 202 */
+/* 203 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use es6";
 
 	var React = __webpack_require__(147);
 
-	var SuggestionInput = __webpack_require__(203);
-	var SuggestionList = __webpack_require__(204);
+	var SuggestionInput = __webpack_require__(204);
+	var SuggestionList = __webpack_require__(205);
 
 	var Geosuggestion = React.createClass({displayName: "Geosuggestion",
 
@@ -27047,7 +27134,7 @@
 	module.exports = Geosuggestion;
 
 /***/ },
-/* 203 */
+/* 204 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use es6";
@@ -27076,14 +27163,14 @@
 	module.exports = SuggestionInput;
 
 /***/ },
-/* 204 */
+/* 205 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use es6";
 
 	var React = __webpack_require__(147);
 
-	var Suggestion = __webpack_require__(205);
+	var Suggestion = __webpack_require__(206);
 
 	var SuggestionList = React.createClass({displayName: "SuggestionList",
 	  generateSuggestions: function() {
@@ -27126,7 +27213,7 @@
 	module.exports = SuggestionList;
 
 /***/ },
-/* 205 */
+/* 206 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use es6";
@@ -27146,41 +27233,6 @@
 	});
 
 	module.exports = Suggestion;
-
-/***/ },
-/* 206 */
-/***/ function(module, exports, __webpack_require__) {
-
-	"use es6";
-
-	var request = __webpack_require__(177);
-	var Promise = __webpack_require__(180).Promise;
-
-	var CoordinateFetcher = {
-	  geocodeApi: "https://maps.googleapis.com/maps/api/geocode/json",
-	  key: "AIzaSyCqY_GY36jbVcoCF8m-SNNqgLjKizIf7rQ",
-
-	  getUrl: function(address) {
-	    return this.geocodeApi + "?" + "address=" + encodeURIComponent(address) + "&key=" + this.key;
-	  },
-
-	  fetchCoordinates: function(address) {
-	    var url = this.getUrl(address);
-	    return new Promise(function (resolve, reject) {
-	      request
-	        .get(url)
-	        .end(function (err, res) {
-	          if (res.status === 404) {
-	            reject();
-	          } else {
-	            resolve(res.body);
-	          }
-	      });
-	    });
-	  },
-	};
-
-	module.exports = CoordinateFetcher;
 
 /***/ },
 /* 207 */

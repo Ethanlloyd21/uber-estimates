@@ -27,23 +27,23 @@ var ActionCreator = {
       });
   },
 
-  getStartCoordinates: function(startLocation) {
+  getStartLocationCoordinates: function(startLocation) {
     CoordinateFetcher
       .fetchCoordinates(startLocation)
       .then(function (coordinates) {
         Dispatcher.handleViewAction({
-          actionType: ActionConstants.GET_START_COORDINATES,
+          actionType: ActionConstants.GET_START_LOCATION_COORDINATES,
           coordinateData: DeepCopy(coordinates)
         });
     });
   },
 
-  getStartCoordinates: function(endLocation) {
+  getEndLocationCoordinates: function(endLocation) {
     CoordinateFetcher
       .fetchCoordinates(endLocation)
       .then(function (coordinates) {
         Dispatcher.handleViewAction({
-          actionType: ActionConstants.GET_END_COORDINATES,
+          actionType: ActionConstants.GET_END_LOCATION_COORDINATES,
           coordinateData: DeepCopy(coordinates)
         });
     });
