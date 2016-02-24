@@ -129,14 +129,20 @@ var App = React.createClass({
     });
   },
 
-  handleSuggestionOnChange: function(event, type) {
-    if (type == AddressTypeConstants.START) {
+  // HANDLERS
+
+  handleStartLocationSuggestionOnChange: function(event) {
+    if ('target' in event && 'value' in event.target) {
       ActionCreator.getStartLocationAutocompleteData(event.target.value);
       this.setState({
         startAddressLocationAutocompleteData: Store.getStartLocationAutocompleteData(),
         startAddress: event.target.value,
       });
-    } else {
+    }
+  },
+
+  handleEndLocationSuggestionOnChange: function(event) {
+    if ('target' in event && 'value' in event.target) {
       ActionCreator.getEndLocationAutocompleteData(event.target.value);
       this.setState({
         endAddressLocationAutocompleteData: Store.getEndLocationAutocompleteData(),
@@ -289,7 +295,7 @@ var App = React.createClass({
             onFocus={this.handleStartAddressSuggestionsOnFocus}
             onBlur={this.handleStartAddressSuggestionsOnBlur}
             onInputKeyDown={this.onInputKeyDown} 
-            onChange={this.handleSuggestionOnChange}
+            onChange={this.handleStartLocationSuggestionOnChange}
             suggestions={this.state.startAddressLocationAutocompleteData} 
             isHidden={this.state.isStartAddressSuggestionsHidden}
             activeSuggestionIndex={this.state.activeStartAddressSuggestionIndex} 
@@ -301,7 +307,7 @@ var App = React.createClass({
             onFocus={this.handleEndAddressSuggestionsOnFocus}
             onBlur={this.handleEndAddressSuggestionsOnBlur}
             onInputKeyDown={this.onInputKeyDown} 
-            onChange={this.handleSuggestionOnChange}
+            onChange={this.handleEndLocationSuggestionOnChange}
             suggestions={this.state.endAddressLocationAutocompleteData} 
             isHidden={this.state.isEndAddressSuggestionsHidden}
             activeSuggestionIndex={this.state.activeEndAddressSuggestionIndex} 
