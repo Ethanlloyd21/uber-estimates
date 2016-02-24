@@ -56,8 +56,10 @@
 	var EstimatesTable = __webpack_require__(187);
 	var Geosuggestion = __webpack_require__(204);
 
+	var AddressTypeConstants = __webpack_require__(208);
+
 	var CoordinateFetcher = __webpack_require__(186);
-	var EstimatesFetcher = __webpack_require__(208);
+	var EstimatesFetcher = __webpack_require__(209);
 	var LocationAutocompleteFetcher = __webpack_require__(177);
 
 	var App = React.createClass({displayName: "App",
@@ -78,7 +80,7 @@
 	          duration: null,
 	          distance: null,
 	          startAddressLocationAutocompleteData: [],
-	          endAddressLocationAutocompleteData: [], 
+	          endAddressLocationAutocompleteData: [],
 	          activeStartAddressSuggestionIndex: 0,
 	          activeEndAddressSuggestionIndex: 0,
 	          isStartAddressSuggestionsHidden: true,
@@ -174,7 +176,7 @@
 	  },
 
 	  handleSuggestionOnChange: function(event, type) {
-	    if (type == "startAddress") {
+	    if (type == AddressTypeConstants.START) {
 	      ActionCreator.getStartLocationAutocompleteData(event.target.value);
 	      this.setState({
 	        startAddressLocationAutocompleteData: Store.getStartLocationAutocompleteData(),
@@ -191,7 +193,7 @@
 
 	  handleSuggestionOnClick: function(event, type) {
 	    event.persist();
-	    if (type == "startAddress") {
+	    if (type == AddressTypeConstants.START) {
 	      this.setState({
 	        startAddress: event.target.outerText
 	      });
@@ -230,7 +232,7 @@
 	    switch (event.which) {
 	      case 40: // DOWN
 	        event.preventDefault();
-	        if (type == "startAddress") {
+	        if (type == AddressTypeConstants.START) {
 	          if (this.state.activeStartAddressSuggestionIndex < this.state.startAddressLocationAutocompleteData.length - 1) {
 	            var newActiveSuggestionIndex = this.state.activeStartAddressSuggestionIndex + 1; 
 	          } else {
@@ -254,7 +256,7 @@
 	        break;
 	      case 38: // UP
 	        event.preventDefault();
-	        if (type == "startAddress") {
+	        if (type == AddressTypeConstants.START) {
 	          if (this.state.activeStartAddressSuggestionIndex > 0) {
 	            var newActiveSuggestionIndex = this.state.activeStartAddressSuggestionIndex - 1; 
 	          } else {
@@ -275,7 +277,7 @@
 	        }
 	        break;
 	      case 13: // ENTER
-	        if (type == "startAddress") {
+	        if (type == AddressTypeConstants.START) {
 	          var locationAutocompleteData = this.state.startAddressLocationAutocompleteData;
 	          this.state.startAddress = locationAutocompleteData[this.state.activeStartAddressSuggestionIndex].description;
 	          this.state.isStartAddressSuggestionsHidden = true;
@@ -329,7 +331,7 @@
 	          React.createElement(Geosuggestion, {
 	            input: this.state.startAddress, 
 	            placeholder: "Start Address", 
-	            type: "startAddress", 
+	            type: AddressTypeConstants.START, 
 	            onFocus: this.handleStartAddressSuggestionsOnFocus, 
 	            onBlur: this.handleStartAddressSuggestionsOnBlur, 
 	            onInputKeyDown: this.onInputKeyDown, 
@@ -341,7 +343,7 @@
 	          React.createElement(Geosuggestion, {
 	            input: this.state.endAddress, 
 	            placeholder: "End Address", 
-	            type: "endAddress", 
+	            type: AddressTypeConstants.END, 
 	            onFocus: this.handleEndAddressSuggestionsOnFocus, 
 	            onBlur: this.handleEndAddressSuggestionsOnBlur, 
 	            onInputKeyDown: this.onInputKeyDown, 
@@ -27541,6 +27543,17 @@
 
 /***/ },
 /* 208 */
+/***/ function(module, exports) {
+
+	"use es6";
+
+	module.exports = {
+	  START: "START",
+	  END: "END"
+	};
+
+/***/ },
+/* 209 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use es6";
