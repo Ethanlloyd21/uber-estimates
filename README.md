@@ -1,4 +1,4 @@
-# Uber Estimates Chrome Extension
+# [Uber Estimates Chrome Extension](https://chrome.google.com/webstore/detail/uber-estimates/ldbofjhefihijnbcidfhaekdfmkbbocn)
 
 ![alt text](http://i.imgur.com/c2JZYUx.png)
 
