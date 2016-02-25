@@ -3,6 +3,7 @@
 var ReactDOM = require('react-dom');
 var React = require('react');
 var Loading = require('react-loading');
+var Tabs = require('react-simpletabs');
 
 var Store = require('./stores/Store');
 var ActionCreator = require('./actions/ActionCreator');
