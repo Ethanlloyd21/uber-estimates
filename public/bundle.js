@@ -50,13 +50,14 @@
 	var React = __webpack_require__(147);
 	var Loading = __webpack_require__(159);
 	var Tabs = __webpack_require__(160);
+	var Panel = Tabs.Panel;
 
 	var Store = __webpack_require__(161);
 	var ActionCreator = __webpack_require__(169);
 
 	var JourneyDetails = __webpack_require__(188);
 	var Geosuggestion = __webpack_require__(208);
-	var JourneyLocationInputTab = __webpack_require__(212);
+	var JourneyLocationInput = __webpack_require__(212);
 
 	var AddressTypeConstants = __webpack_require__(213);
 
@@ -318,24 +319,26 @@
 	    } else {
 	      return (
 	        React.createElement(Tabs, null, 
-	          React.createElement(JourneyLocationInputTab, {
-	            startAddress: this.state.startAddress, 
-	            handleStartAddressSuggestionsOnFocus: this.handleStartAddressSuggestionsOnFocus, 
-	            handleStartAddressSuggestionsOnBlur: this.handleStartAddressSuggestionsOnBlur, 
-	            onInputKeyDown: this.onInputKeyDown, 
-	            handleStartLocationSuggestionOnChange: this.handleStartLocationSuggestionOnChange, 
-	            startAddressLocationAutocompleteData: this.state.startAddressLocationAutocompleteData, 
-	            isStartAddressSuggestionsHidden: this.state.isStartAddressSuggestionsHidden, 
-	            activeStartAddressSuggestionIndex: this.state.activeStartAddressSuggestionIndex, 
-	            handleSuggestionOnClick: this.handleSuggestionOnClick, 
-	            endAddress: this.state.endAddress, 
-	            handleEndAddressSuggestionsOnFocus: this.handleEndAddressSuggestionsOnFocus, 
-	            handleEndAddressSuggestionsOnBlur: this.handleEndAddressSuggestionsOnBlur, 
-	            handleEndLocationSuggestionOnChange: this.handleEndLocationSuggestionOnChange, 
-	            endAddressLocationAutocompleteData: this.state.endAddressLocationAutocompleteData, 
-	            isEndAddressSuggestionsHidden: this.state.isEndAddressSuggestionsHidden, 
-	            activeEndAddressSuggestionIndex: this.state.activeEndAddressSuggestionIndex}), 
-	          React.createElement(Tabs.Panel, {title: "Estimates"}, 
+	          React.createElement(Panel, {title: "Location"}, 
+	            React.createElement(JourneyLocationInput, {
+	              startAddress: this.state.startAddress, 
+	              handleStartAddressSuggestionsOnFocus: this.handleStartAddressSuggestionsOnFocus, 
+	              handleStartAddressSuggestionsOnBlur: this.handleStartAddressSuggestionsOnBlur, 
+	              onInputKeyDown: this.onInputKeyDown, 
+	              handleStartLocationSuggestionOnChange: this.handleStartLocationSuggestionOnChange, 
+	              startAddressLocationAutocompleteData: this.state.startAddressLocationAutocompleteData, 
+	              isStartAddressSuggestionsHidden: this.state.isStartAddressSuggestionsHidden, 
+	              activeStartAddressSuggestionIndex: this.state.activeStartAddressSuggestionIndex, 
+	              handleSuggestionOnClick: this.handleSuggestionOnClick, 
+	              endAddress: this.state.endAddress, 
+	              handleEndAddressSuggestionsOnFocus: this.handleEndAddressSuggestionsOnFocus, 
+	              handleEndAddressSuggestionsOnBlur: this.handleEndAddressSuggestionsOnBlur, 
+	              handleEndLocationSuggestionOnChange: this.handleEndLocationSuggestionOnChange, 
+	              endAddressLocationAutocompleteData: this.state.endAddressLocationAutocompleteData, 
+	              isEndAddressSuggestionsHidden: this.state.isEndAddressSuggestionsHidden, 
+	              activeEndAddressSuggestionIndex: this.state.activeEndAddressSuggestionIndex})
+	          ), 
+	          React.createElement(Panel, {title: "Estimates"}, 
 	            React.createElement(JourneyDetails, {
 	              estimates: this.state.combinedData, 
 	              titleValueMap: this.generateTitleValueMap()})
@@ -27875,16 +27878,14 @@
 	"use es6";
 
 	var React = __webpack_require__(147);
-	var Tabs = __webpack_require__(160);
-	var Panel = Tabs.Panel;
 
 	var Geosuggestion = __webpack_require__(208);
 	var AddressTypeConstants = __webpack_require__(213);
 
-	var JourneyLocationInputTab = React.createClass({displayName: "JourneyLocationInputTab",
+	var JourneyLocationInput = React.createClass({displayName: "JourneyLocationInput",
 	  render: function() {
 	    return (
-	      React.createElement(Panel, {title: "Location"}, 
+	      React.createElement("div", null, 
 	        React.createElement(Geosuggestion, {
 	          input: this.props.startAddress, 
 	          placeholder: "Start Address", 
@@ -27914,7 +27915,7 @@
 	  }
 	});
 
-	module.exports = JourneyLocationInputTab;
+	module.exports = JourneyLocationInput;
 
 /***/ },
 /* 213 */
