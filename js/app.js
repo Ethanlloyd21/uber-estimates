@@ -270,35 +270,39 @@ var App = React.createClass({
       return (<Loading className='loading' type='spokes' color='#000000' />);
     } else {
       return (
-        <div>
-          <Geosuggestion 
-            input={this.state.startAddress} 
-            placeholder={"Start Address"}
-            type={AddressTypeConstants.START}
-            onFocus={this.handleStartAddressSuggestionsOnFocus}
-            onBlur={this.handleStartAddressSuggestionsOnBlur}
-            onInputKeyDown={this.onInputKeyDown} 
-            onChange={this.handleStartLocationSuggestionOnChange}
-            suggestions={this.state.startAddressLocationAutocompleteData} 
-            isHidden={this.state.isStartAddressSuggestionsHidden}
-            activeSuggestionIndex={this.state.activeStartAddressSuggestionIndex} 
-            handleSuggestionOnClick={this.handleSuggestionOnClick} />
-          <Geosuggestion 
-            input={this.state.endAddress} 
-            placeholder={"End Address"}
-            type={AddressTypeConstants.END}
-            onFocus={this.handleEndAddressSuggestionsOnFocus}
-            onBlur={this.handleEndAddressSuggestionsOnBlur}
-            onInputKeyDown={this.onInputKeyDown} 
-            onChange={this.handleEndLocationSuggestionOnChange}
-            suggestions={this.state.endAddressLocationAutocompleteData} 
-            isHidden={this.state.isEndAddressSuggestionsHidden}
-            activeSuggestionIndex={this.state.activeEndAddressSuggestionIndex} 
-            handleSuggestionOnClick={this.handleSuggestionOnClick} />
-          <JourneyDetails
-            estimates={this.state.combinedData}
-            titleValueMap={this.generateTitleValueMap()} />
-        </div>
+        <Tabs>
+          <Tabs.Panel title='Location'>
+            <Geosuggestion 
+              input={this.state.startAddress} 
+              placeholder={"Start Address"}
+              type={AddressTypeConstants.START}
+              onFocus={this.handleStartAddressSuggestionsOnFocus}
+              onBlur={this.handleStartAddressSuggestionsOnBlur}
+              onInputKeyDown={this.onInputKeyDown} 
+              onChange={this.handleStartLocationSuggestionOnChange}
+              suggestions={this.state.startAddressLocationAutocompleteData} 
+              isHidden={this.state.isStartAddressSuggestionsHidden}
+              activeSuggestionIndex={this.state.activeStartAddressSuggestionIndex} 
+              handleSuggestionOnClick={this.handleSuggestionOnClick} />
+            <Geosuggestion 
+              input={this.state.endAddress} 
+              placeholder={"End Address"}
+              type={AddressTypeConstants.END}
+              onFocus={this.handleEndAddressSuggestionsOnFocus}
+              onBlur={this.handleEndAddressSuggestionsOnBlur}
+              onInputKeyDown={this.onInputKeyDown} 
+              onChange={this.handleEndLocationSuggestionOnChange}
+              suggestions={this.state.endAddressLocationAutocompleteData} 
+              isHidden={this.state.isEndAddressSuggestionsHidden}
+              activeSuggestionIndex={this.state.activeEndAddressSuggestionIndex} 
+              handleSuggestionOnClick={this.handleSuggestionOnClick} />
+          </Tabs.Panel>
+          <Tabs.Panel title='Estimates'>
+            <JourneyDetails
+              estimates={this.state.combinedData}
+              titleValueMap={this.generateTitleValueMap()} />
+          </Tabs.Panel>
+        </Tabs>
       )
     }
   }
