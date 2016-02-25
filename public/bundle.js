@@ -49,18 +49,21 @@
 	var ReactDOM = __webpack_require__(1);
 	var React = __webpack_require__(147);
 	var Loading = __webpack_require__(159);
+	var Tabs = __webpack_require__(160);
+	var Panel = Tabs.Panel;
 
-	var Store = __webpack_require__(160);
-	var ActionCreator = __webpack_require__(168);
+	var Store = __webpack_require__(161);
+	var ActionCreator = __webpack_require__(169);
 
-	var JourneyDetails = __webpack_require__(187);
-	var Geosuggestion = __webpack_require__(207);
+	var JourneyDetails = __webpack_require__(188);
+	var Geosuggestion = __webpack_require__(208);
+	var JourneyLocationInput = __webpack_require__(212);
 
-	var AddressTypeConstants = __webpack_require__(211);
+	var AddressTypeConstants = __webpack_require__(213);
 
-	var CoordinateFetcher = __webpack_require__(186);
-	var EstimatesFetcher = __webpack_require__(212);
-	var LocationAutocompleteFetcher = __webpack_require__(177);
+	var CoordinateFetcher = __webpack_require__(187);
+	var EstimatesFetcher = __webpack_require__(214);
+	var LocationAutocompleteFetcher = __webpack_require__(178);
 
 	var App = React.createClass({displayName: "App",
 
@@ -315,34 +318,31 @@
 	      return (React.createElement(Loading, {className: "loading", type: "spokes", color: "#000000"}));
 	    } else {
 	      return (
-	        React.createElement("div", null, 
-	          React.createElement(Geosuggestion, {
-	            input: this.state.startAddress, 
-	            placeholder: "Start Address", 
-	            type: AddressTypeConstants.START, 
-	            onFocus: this.handleStartAddressSuggestionsOnFocus, 
-	            onBlur: this.handleStartAddressSuggestionsOnBlur, 
-	            onInputKeyDown: this.onInputKeyDown, 
-	            onChange: this.handleStartLocationSuggestionOnChange, 
-	            suggestions: this.state.startAddressLocationAutocompleteData, 
-	            isHidden: this.state.isStartAddressSuggestionsHidden, 
-	            activeSuggestionIndex: this.state.activeStartAddressSuggestionIndex, 
-	            handleSuggestionOnClick: this.handleSuggestionOnClick}), 
-	          React.createElement(Geosuggestion, {
-	            input: this.state.endAddress, 
-	            placeholder: "End Address", 
-	            type: AddressTypeConstants.END, 
-	            onFocus: this.handleEndAddressSuggestionsOnFocus, 
-	            onBlur: this.handleEndAddressSuggestionsOnBlur, 
-	            onInputKeyDown: this.onInputKeyDown, 
-	            onChange: this.handleEndLocationSuggestionOnChange, 
-	            suggestions: this.state.endAddressLocationAutocompleteData, 
-	            isHidden: this.state.isEndAddressSuggestionsHidden, 
-	            activeSuggestionIndex: this.state.activeEndAddressSuggestionIndex, 
-	            handleSuggestionOnClick: this.handleSuggestionOnClick}), 
-	          React.createElement(JourneyDetails, {
-	            estimates: this.state.combinedData, 
-	            titleValueMap: this.generateTitleValueMap()})
+	        React.createElement(Tabs, null, 
+	          React.createElement(Panel, {title: "Location"}, 
+	            React.createElement(JourneyLocationInput, {
+	              startAddress: this.state.startAddress, 
+	              handleStartAddressSuggestionsOnFocus: this.handleStartAddressSuggestionsOnFocus, 
+	              handleStartAddressSuggestionsOnBlur: this.handleStartAddressSuggestionsOnBlur, 
+	              onInputKeyDown: this.onInputKeyDown, 
+	              handleStartLocationSuggestionOnChange: this.handleStartLocationSuggestionOnChange, 
+	              startAddressLocationAutocompleteData: this.state.startAddressLocationAutocompleteData, 
+	              isStartAddressSuggestionsHidden: this.state.isStartAddressSuggestionsHidden, 
+	              activeStartAddressSuggestionIndex: this.state.activeStartAddressSuggestionIndex, 
+	              handleSuggestionOnClick: this.handleSuggestionOnClick, 
+	              endAddress: this.state.endAddress, 
+	              handleEndAddressSuggestionsOnFocus: this.handleEndAddressSuggestionsOnFocus, 
+	              handleEndAddressSuggestionsOnBlur: this.handleEndAddressSuggestionsOnBlur, 
+	              handleEndLocationSuggestionOnChange: this.handleEndLocationSuggestionOnChange, 
+	              endAddressLocationAutocompleteData: this.state.endAddressLocationAutocompleteData, 
+	              isEndAddressSuggestionsHidden: this.state.isEndAddressSuggestionsHidden, 
+	              activeEndAddressSuggestionIndex: this.state.activeEndAddressSuggestionIndex})
+	          ), 
+	          React.createElement(Panel, {title: "Estimates"}, 
+	            React.createElement(JourneyDetails, {
+	              estimates: this.state.combinedData, 
+	              titleValueMap: this.generateTitleValueMap()})
+	          )
 	        )
 	      )
 	    }
@@ -20228,12 +20228,274 @@
 /* 160 */
 /***/ function(module, exports, __webpack_require__) {
 
+	/*!
+	 * 
+	 *  React Simpletabs - Just a simple tabs component built with React
+	 *  @version v0.7.0
+	 *  @link https://github.com/pedronauck/react-simpletabs
+	 *  @license MIT
+	 *  @author Pedro Nauck (https://github.com/pedronauck)
+	 * 
+	 */
+	(function webpackUniversalModuleDefinition(root, factory) {
+		if(true)
+			module.exports = factory(__webpack_require__(147));
+		else if(typeof define === 'function' && define.amd)
+			define(["react"], factory);
+		else if(typeof exports === 'object')
+			exports["ReactSimpleTabs"] = factory(require("react"));
+		else
+			root["ReactSimpleTabs"] = factory(root["React"]);
+	})(this, function(__WEBPACK_EXTERNAL_MODULE_1__) {
+	return /******/ (function(modules) { // webpackBootstrap
+	/******/ 	// The module cache
+	/******/ 	var installedModules = {};
+	/******/
+	/******/ 	// The require function
+	/******/ 	function __webpack_require__(moduleId) {
+	/******/
+	/******/ 		// Check if module is in cache
+	/******/ 		if(installedModules[moduleId])
+	/******/ 			return installedModules[moduleId].exports;
+	/******/
+	/******/ 		// Create a new module (and put it into the cache)
+	/******/ 		var module = installedModules[moduleId] = {
+	/******/ 			exports: {},
+	/******/ 			id: moduleId,
+	/******/ 			loaded: false
+	/******/ 		};
+	/******/
+	/******/ 		// Execute the module function
+	/******/ 		modules[moduleId].call(module.exports, module, module.exports, __webpack_require__);
+	/******/
+	/******/ 		// Flag the module as loaded
+	/******/ 		module.loaded = true;
+	/******/
+	/******/ 		// Return the exports of the module
+	/******/ 		return module.exports;
+	/******/ 	}
+	/******/
+	/******/
+	/******/ 	// expose the modules object (__webpack_modules__)
+	/******/ 	__webpack_require__.m = modules;
+	/******/
+	/******/ 	// expose the module cache
+	/******/ 	__webpack_require__.c = installedModules;
+	/******/
+	/******/ 	// __webpack_public_path__
+	/******/ 	__webpack_require__.p = "";
+	/******/
+	/******/ 	// Load entry module and return exports
+	/******/ 	return __webpack_require__(0);
+	/******/ })
+	/************************************************************************/
+	/******/ ([
+	/* 0 */
+	/***/ function(module, exports, __webpack_require__) {
+
+		/** @jsx React.DOM */'use strict';
+
+		var React = __webpack_require__(1);
+		var classNames = __webpack_require__(2);
+
+		if (true) {
+		  __webpack_require__(3);
+		}
+
+		var Tabs = React.createClass({
+		  displayName: 'Tabs',
+		  propTypes: {
+		    className: React.PropTypes.oneOfType([
+		      React.PropTypes.array,
+		      React.PropTypes.string,
+		      React.PropTypes.object
+		    ]),
+		    tabActive: React.PropTypes.number,
+		    onMount: React.PropTypes.func,
+		    onBeforeChange: React.PropTypes.func,
+		    onAfterChange: React.PropTypes.func,
+		    children: React.PropTypes.oneOfType([
+		      React.PropTypes.array,
+		      React.PropTypes.element
+		    ]).isRequired
+		  },
+		  getDefaultProps:function () {
+		    return { tabActive: 1 };
+		  },
+		  getInitialState:function () {
+		    return {
+		      tabActive: this.props.tabActive
+		    };
+		  },
+		  componentDidMount:function() {
+		    var index = this.state.tabActive;
+		    var $selectedPanel = this.refs['tab-panel'];
+		    var $selectedMenu = this.refs[("tab-menu-" + index)];
+
+		    if (this.props.onMount) {
+		      this.props.onMount(index, $selectedPanel, $selectedMenu);
+		    }
+		  },
+		  componentWillReceiveProps: function(newProps){
+		    if(newProps.tabActive && newProps.tabActive !== this.props.tabActive){
+		      this.setState({tabActive: newProps.tabActive});
+		    }
+		  },
+		  render:function () {
+		    var className = classNames('tabs', this.props.className);
+		    return (
+		      React.createElement("div", {className: className}, 
+		        this._getMenuItems(), 
+		        this._getSelectedPanel()
+		      )
+		    );
+		  },
+		  setActive:function(index, e) {
+		    e.preventDefault();
+
+		    var onAfterChange = this.props.onAfterChange;
+		    var onBeforeChange = this.props.onBeforeChange;
+		    var $selectedPanel = this.refs['tab-panel'];
+		    var $selectedTabMenu = this.refs[("tab-menu-" + index)];
+
+		    if (onBeforeChange) {
+		      var cancel = onBeforeChange(index, $selectedPanel, $selectedTabMenu);
+		      if(cancel === false){ return }
+		    }
+
+		    this.setState({ tabActive: index }, function()  {
+		      if (onAfterChange) {
+		        onAfterChange(index, $selectedPanel, $selectedTabMenu);
+		      }
+		    });
+		  },
+		  _getMenuItems:function () {
+		    if (!this.props.children) {
+		      throw new Error('Tabs must contain at least one Tabs.Panel');
+		    }
+
+		    if (!Array.isArray(this.props.children)) {
+		      this.props.children = [this.props.children];
+		    }
+
+		    var $menuItems = this.props.children
+		      .map(function($panel)  {return typeof $panel === 'function' ? $panel() : $panel;})
+		      .filter(function($panel)  {return $panel;})
+		      .map(function($panel, index)  {
+		        var ref = ("tab-menu-" + (index + 1));
+		        var title = $panel.props.title;
+		        var classes = classNames(
+		          'tabs-menu-item',
+		          this.state.tabActive === (index + 1) && 'is-active'
+		        );
+
+		        return (
+		          React.createElement("li", {ref: ref, key: index, className: classes}, 
+		            React.createElement("a", {onClick: this.setActive.bind(this, index + 1)}, 
+		              title
+		            )
+		          )
+		        );
+		      }.bind(this));
+
+		    return (
+		      React.createElement("nav", {className: "tabs-navigation"}, 
+		        React.createElement("ul", {className: "tabs-menu"}, $menuItems)
+		      )
+		    );
+		  },
+		  _getSelectedPanel:function () {
+		    var index = this.state.tabActive - 1;
+		    var $panel = this.props.children[index];
+
+		    return (
+		      React.createElement("article", {ref: "tab-panel", className: "tab-panel"}, 
+		        $panel
+		      )
+		    );
+		  }
+		});
+
+		Tabs.Panel = React.createClass({
+		  displayName: 'Panel',
+		  propTypes: {
+		    title: React.PropTypes.string.isRequired,
+		    children: React.PropTypes.oneOfType([
+		      React.PropTypes.array,
+		      React.PropTypes.element
+		    ]).isRequired
+		  },
+		  render:function () {
+		    return React.createElement("div", null, this.props.children);
+		  }
+		});
+
+		module.exports = Tabs;
+
+
+	/***/ },
+	/* 1 */
+	/***/ function(module, exports, __webpack_require__) {
+
+		module.exports = __WEBPACK_EXTERNAL_MODULE_1__;
+
+	/***/ },
+	/* 2 */
+	/***/ function(module, exports, __webpack_require__) {
+
+		/** @jsx React.DOM */function classNames() {
+			var classes = '';
+			var arg;
+
+			for (var i = 0; i < arguments.length; i++) {
+				arg = arguments[i];
+				if (!arg) {
+					continue;
+				}
+
+				if ('string' === typeof arg || 'number' === typeof arg) {
+					classes += ' ' + arg;
+				} else if (Object.prototype.toString.call(arg) === '[object Array]') {
+					classes += ' ' + classNames.apply(null, arg);
+				} else if ('object' === typeof arg) {
+					for (var key in arg) {
+						if (!arg.hasOwnProperty(key) || !arg[key]) {
+							continue;
+						}
+						classes += ' ' + key;
+					}
+				}
+			}
+			return classes.substr(1);
+		}
+
+		// safely export classNames in case the script is included directly on a page
+		if (typeof module !== 'undefined' && module.exports) {
+			module.exports = classNames;
+		}
+
+
+	/***/ },
+	/* 3 */
+	/***/ function(module, exports, __webpack_require__) {
+
+		// removed by extract-text-webpack-plugin
+
+	/***/ }
+	/******/ ])
+	});
+
+
+/***/ },
+/* 161 */
+/***/ function(module, exports, __webpack_require__) {
+
 	"use es6";
 
-	var Dispatcher = __webpack_require__(161);
-	var ActionConstants = __webpack_require__(166);
-	var EventEmitter = __webpack_require__(167).EventEmitter;
-	var assign = __webpack_require__(165);
+	var Dispatcher = __webpack_require__(162);
+	var ActionConstants = __webpack_require__(167);
+	var EventEmitter = __webpack_require__(168).EventEmitter;
+	var assign = __webpack_require__(166);
 
 	var CHANGE_EVENT = 'change';
 	var _startLocationAutocompleteData = [];
@@ -20343,13 +20605,13 @@
 	module.exports = Store;
 
 /***/ },
-/* 161 */
+/* 162 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use es6";
 
-	var Flux = __webpack_require__(162);
-	var assign = __webpack_require__(165);
+	var Flux = __webpack_require__(163);
+	var assign = __webpack_require__(166);
 
 	/**
 	 * A singleton that operates as the central hub for application updates.
@@ -20373,7 +20635,7 @@
 	module.exports = Dispatcher;
 
 /***/ },
-/* 162 */
+/* 163 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -20385,11 +20647,11 @@
 	 * of patent rights can be found in the PATENTS file in the same directory.
 	 */
 
-	module.exports.Dispatcher = __webpack_require__(163);
+	module.exports.Dispatcher = __webpack_require__(164);
 
 
 /***/ },
-/* 163 */
+/* 164 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {/**
@@ -20411,7 +20673,7 @@
 
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
 
-	var invariant = __webpack_require__(164);
+	var invariant = __webpack_require__(165);
 
 	var _prefix = 'ID_';
 
@@ -20626,7 +20888,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(3)))
 
 /***/ },
-/* 164 */
+/* 165 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {/**
@@ -20681,7 +20943,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(3)))
 
 /***/ },
-/* 165 */
+/* 166 */
 /***/ function(module, exports) {
 
 	/* eslint-disable no-unused-vars */
@@ -20726,7 +20988,7 @@
 
 
 /***/ },
-/* 166 */
+/* 167 */
 /***/ function(module, exports) {
 
 	"use es6";
@@ -20739,7 +21001,7 @@
 	};
 
 /***/ },
-/* 167 */
+/* 168 */
 /***/ function(module, exports) {
 
 	// Copyright Joyent, Inc. and other Node contributors.
@@ -21043,15 +21305,15 @@
 
 
 /***/ },
-/* 168 */
+/* 169 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var Dispatcher = __webpack_require__(161);
-	var DeepCopy = __webpack_require__(169);
-	var LocationAutocompleteFetcher = __webpack_require__(177);
-	var CoordinateFetcher = __webpack_require__(186);
+	var Dispatcher = __webpack_require__(162);
+	var DeepCopy = __webpack_require__(170);
+	var LocationAutocompleteFetcher = __webpack_require__(178);
+	var CoordinateFetcher = __webpack_require__(187);
 
-	var ActionConstants = __webpack_require__(166);
+	var ActionConstants = __webpack_require__(167);
 
 	var ActionCreator = {
 	  getStartLocationAutocompleteData: function (startLocation) {
@@ -21101,23 +21363,23 @@
 	module.exports = ActionCreator;
 
 /***/ },
-/* 169 */
+/* 170 */
 /***/ function(module, exports, __webpack_require__) {
 
-	module.exports = __webpack_require__(170);
+	module.exports = __webpack_require__(171);
 
 
 /***/ },
-/* 170 */
+/* 171 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
 
 	exports.__esModule = true;
 
-	var _copy = __webpack_require__(171);
+	var _copy = __webpack_require__(172);
 
-	var _polyfill = __webpack_require__(176);
+	var _polyfill = __webpack_require__(177);
 
 	function defaultCustomizer(target) {
 	  return void 0;
@@ -21201,14 +21463,14 @@
 	module.exports = exports['default'];
 
 /***/ },
-/* 171 */
+/* 172 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(Buffer) {'use strict';
 
 	exports.__esModule = true;
 
-	var _polyfill = __webpack_require__(176);
+	var _polyfill = __webpack_require__(177);
 
 	var toString = Object.prototype.toString;
 
@@ -21349,10 +21611,10 @@
 	  copyValue: copyValue
 	};
 	module.exports = exports['default'];
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(172).Buffer))
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(173).Buffer))
 
 /***/ },
-/* 172 */
+/* 173 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(Buffer, global) {/*!
@@ -21365,9 +21627,9 @@
 
 	'use strict'
 
-	var base64 = __webpack_require__(173)
-	var ieee754 = __webpack_require__(174)
-	var isArray = __webpack_require__(175)
+	var base64 = __webpack_require__(174)
+	var ieee754 = __webpack_require__(175)
+	var isArray = __webpack_require__(176)
 
 	exports.Buffer = Buffer
 	exports.SlowBuffer = SlowBuffer
@@ -22904,10 +23166,10 @@
 	  return i
 	}
 
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(172).Buffer, (function() { return this; }())))
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(173).Buffer, (function() { return this; }())))
 
 /***/ },
-/* 173 */
+/* 174 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var lookup = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/';
@@ -23037,7 +23299,7 @@
 
 
 /***/ },
-/* 174 */
+/* 175 */
 /***/ function(module, exports) {
 
 	exports.read = function (buffer, offset, isLE, mLen, nBytes) {
@@ -23127,7 +23389,7 @@
 
 
 /***/ },
-/* 175 */
+/* 176 */
 /***/ function(module, exports) {
 
 	var toString = {}.toString;
@@ -23138,7 +23400,7 @@
 
 
 /***/ },
-/* 176 */
+/* 177 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(Buffer) {'use strict';
@@ -23215,16 +23477,16 @@
 	  isBuffer: isBuffer
 	};
 	module.exports = exports['default'];
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(172).Buffer))
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(173).Buffer))
 
 /***/ },
-/* 177 */
+/* 178 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use es6";
 
-	var request = __webpack_require__(178);
-	var Promise = __webpack_require__(181).Promise;
+	var request = __webpack_require__(179);
+	var Promise = __webpack_require__(182).Promise;
 
 	var LocationAutocompleteFetcher = {
 	  geocodeApi: "https://maps.googleapis.com/maps/api/place/autocomplete/json",
@@ -23253,15 +23515,15 @@
 	module.exports = LocationAutocompleteFetcher;
 
 /***/ },
-/* 178 */
+/* 179 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
 	 * Module dependencies.
 	 */
 
-	var Emitter = __webpack_require__(179);
-	var reduce = __webpack_require__(180);
+	var Emitter = __webpack_require__(180);
+	var reduce = __webpack_require__(181);
 
 	/**
 	 * Root reference for iframes.
@@ -24450,7 +24712,7 @@
 
 
 /***/ },
-/* 179 */
+/* 180 */
 /***/ function(module, exports) {
 
 	
@@ -24617,7 +24879,7 @@
 
 
 /***/ },
-/* 180 */
+/* 181 */
 /***/ function(module, exports) {
 
 	
@@ -24646,7 +24908,7 @@
 	};
 
 /***/ },
-/* 181 */
+/* 182 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var require;var __WEBPACK_AMD_DEFINE_RESULT__;/* WEBPACK VAR INJECTION */(function(process, setImmediate, global, module) {/*!
@@ -24785,7 +25047,7 @@
 	    function lib$es6$promise$asap$$attemptVertex() {
 	      try {
 	        var r = require;
-	        var vertx = __webpack_require__(184);
+	        var vertx = __webpack_require__(185);
 	        lib$es6$promise$asap$$vertxNext = vertx.runOnLoop || vertx.runOnContext;
 	        return lib$es6$promise$asap$$useVertxTimer();
 	      } catch(e) {
@@ -25610,7 +25872,7 @@
 	    };
 
 	    /* global define:true module:true window: true */
-	    if ("function" === 'function' && __webpack_require__(185)['amd']) {
+	    if ("function" === 'function' && __webpack_require__(186)['amd']) {
 	      !(__WEBPACK_AMD_DEFINE_RESULT__ = function() { return lib$es6$promise$umd$$ES6Promise; }.call(exports, __webpack_require__, exports, module), __WEBPACK_AMD_DEFINE_RESULT__ !== undefined && (module.exports = __WEBPACK_AMD_DEFINE_RESULT__));
 	    } else if (typeof module !== 'undefined' && module['exports']) {
 	      module['exports'] = lib$es6$promise$umd$$ES6Promise;
@@ -25622,10 +25884,10 @@
 	}).call(this);
 
 
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(3), __webpack_require__(182).setImmediate, (function() { return this; }()), __webpack_require__(183)(module)))
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(3), __webpack_require__(183).setImmediate, (function() { return this; }()), __webpack_require__(184)(module)))
 
 /***/ },
-/* 182 */
+/* 183 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(setImmediate, clearImmediate) {var nextTick = __webpack_require__(3).nextTick;
@@ -25704,10 +25966,10 @@
 	exports.clearImmediate = typeof clearImmediate === "function" ? clearImmediate : function(id) {
 	  delete immediateIds[id];
 	};
-	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(182).setImmediate, __webpack_require__(182).clearImmediate))
+	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(183).setImmediate, __webpack_require__(183).clearImmediate))
 
 /***/ },
-/* 183 */
+/* 184 */
 /***/ function(module, exports) {
 
 	module.exports = function(module) {
@@ -25723,26 +25985,26 @@
 
 
 /***/ },
-/* 184 */
+/* 185 */
 /***/ function(module, exports) {
 
 	/* (ignored) */
 
 /***/ },
-/* 185 */
+/* 186 */
 /***/ function(module, exports) {
 
 	module.exports = function() { throw new Error("define cannot be used indirect"); };
 
 
 /***/ },
-/* 186 */
+/* 187 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use es6";
 
-	var request = __webpack_require__(178);
-	var Promise = __webpack_require__(181).Promise;
+	var request = __webpack_require__(179);
+	var Promise = __webpack_require__(182).Promise;
 
 	var CoordinateFetcher = {
 	  geocodeApi: "https://maps.googleapis.com/maps/api/geocode/json",
@@ -25771,15 +26033,15 @@
 	module.exports = CoordinateFetcher;
 
 /***/ },
-/* 187 */
+/* 188 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use es6";
 
 	var React = __webpack_require__(147);
 
-	var EstimatesTable = __webpack_require__(188);
-	var JourneyProperties = __webpack_require__(205);
+	var EstimatesTable = __webpack_require__(189);
+	var JourneyProperties = __webpack_require__(206);
 
 	var JourneyDetails = React.createClass({displayName: "JourneyDetails",
 	  render: function() {
@@ -25798,13 +26060,13 @@
 	module.exports = JourneyDetails;
 
 /***/ },
-/* 188 */
+/* 189 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use es6";
 
 	var React = __webpack_require__(147);
-	var Reactable = __webpack_require__(189);
+	var Reactable = __webpack_require__(190);
 	var Table = Reactable.Table;
 
 	var EstimatesTable = React.createClass({displayName: "EstimatesTable",
@@ -25843,7 +26105,7 @@
 	module.exports = EstimatesTable;
 
 /***/ },
-/* 189 */
+/* 190 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -25858,21 +26120,21 @@
 
 	var _react2 = _interopRequireDefault(_react);
 
-	var _reactableTable = __webpack_require__(190);
+	var _reactableTable = __webpack_require__(191);
 
-	var _reactableTr = __webpack_require__(198);
+	var _reactableTr = __webpack_require__(199);
 
-	var _reactableTd = __webpack_require__(199);
+	var _reactableTd = __webpack_require__(200);
 
-	var _reactableTh = __webpack_require__(196);
+	var _reactableTh = __webpack_require__(197);
 
-	var _reactableTfoot = __webpack_require__(202);
+	var _reactableTfoot = __webpack_require__(203);
 
-	var _reactableThead = __webpack_require__(195);
+	var _reactableThead = __webpack_require__(196);
 
-	var _reactableSort = __webpack_require__(204);
+	var _reactableSort = __webpack_require__(205);
 
-	var _reactableUnsafe = __webpack_require__(194);
+	var _reactableUnsafe = __webpack_require__(195);
 
 	_react2['default'].Children.children = function (children) {
 	    return _react2['default'].Children.map(children, function (x) {
@@ -25921,7 +26183,7 @@
 
 
 /***/ },
-/* 190 */
+/* 191 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -25946,21 +26208,21 @@
 
 	var _react2 = _interopRequireDefault(_react);
 
-	var _libFilter_props_from = __webpack_require__(191);
+	var _libFilter_props_from = __webpack_require__(192);
 
-	var _libExtract_data_from = __webpack_require__(192);
+	var _libExtract_data_from = __webpack_require__(193);
 
-	var _unsafe = __webpack_require__(194);
+	var _unsafe = __webpack_require__(195);
 
-	var _thead = __webpack_require__(195);
+	var _thead = __webpack_require__(196);
 
-	var _th = __webpack_require__(196);
+	var _th = __webpack_require__(197);
 
-	var _tr = __webpack_require__(198);
+	var _tr = __webpack_require__(199);
 
-	var _tfoot = __webpack_require__(202);
+	var _tfoot = __webpack_require__(203);
 
-	var _paginator = __webpack_require__(203);
+	var _paginator = __webpack_require__(204);
 
 	var Table = (function (_React$Component) {
 	    _inherits(Table, _React$Component);
@@ -26440,7 +26702,7 @@
 
 
 /***/ },
-/* 191 */
+/* 192 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -26476,7 +26738,7 @@
 
 
 /***/ },
-/* 192 */
+/* 193 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -26486,7 +26748,7 @@
 	});
 	exports.extractDataFrom = extractDataFrom;
 
-	var _stringable = __webpack_require__(193);
+	var _stringable = __webpack_require__(194);
 
 	function extractDataFrom(key, column) {
 	    var value;
@@ -26505,7 +26767,7 @@
 
 
 /***/ },
-/* 193 */
+/* 194 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -26521,7 +26783,7 @@
 
 
 /***/ },
-/* 194 */
+/* 195 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -26568,7 +26830,7 @@
 
 
 /***/ },
-/* 195 */
+/* 196 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -26593,11 +26855,11 @@
 
 	var _react2 = _interopRequireDefault(_react);
 
-	var _th = __webpack_require__(196);
+	var _th = __webpack_require__(197);
 
-	var _filterer = __webpack_require__(197);
+	var _filterer = __webpack_require__(198);
 
-	var _libFilter_props_from = __webpack_require__(191);
+	var _libFilter_props_from = __webpack_require__(192);
 
 	var Thead = (function (_React$Component) {
 	    _inherits(Thead, _React$Component);
@@ -26721,7 +26983,7 @@
 
 
 /***/ },
-/* 196 */
+/* 197 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -26746,9 +27008,9 @@
 
 	var _react2 = _interopRequireDefault(_react);
 
-	var _unsafe = __webpack_require__(194);
+	var _unsafe = __webpack_require__(195);
 
-	var _libFilter_props_from = __webpack_require__(191);
+	var _libFilter_props_from = __webpack_require__(192);
 
 	var Th = (function (_React$Component) {
 	    _inherits(Th, _React$Component);
@@ -26785,7 +27047,7 @@
 
 
 /***/ },
-/* 197 */
+/* 198 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -26882,7 +27144,7 @@
 
 
 /***/ },
-/* 198 */
+/* 199 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -26907,11 +27169,11 @@
 
 	var _react2 = _interopRequireDefault(_react);
 
-	var _td = __webpack_require__(199);
+	var _td = __webpack_require__(200);
 
-	var _libTo_array = __webpack_require__(201);
+	var _libTo_array = __webpack_require__(202);
 
-	var _libFilter_props_from = __webpack_require__(191);
+	var _libFilter_props_from = __webpack_require__(192);
 
 	var Tr = (function (_React$Component) {
 	    _inherits(Tr, _React$Component);
@@ -26971,7 +27233,7 @@
 
 
 /***/ },
-/* 199 */
+/* 200 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -26994,11 +27256,11 @@
 
 	var _react2 = _interopRequireDefault(_react);
 
-	var _libIs_react_component = __webpack_require__(200);
+	var _libIs_react_component = __webpack_require__(201);
 
-	var _libStringable = __webpack_require__(193);
+	var _libStringable = __webpack_require__(194);
 
-	var _unsafe = __webpack_require__(194);
+	var _unsafe = __webpack_require__(195);
 
 	var Td = (function (_React$Component) {
 	    _inherits(Td, _React$Component);
@@ -27061,7 +27323,7 @@
 
 
 /***/ },
-/* 200 */
+/* 201 */
 /***/ function(module, exports) {
 
 	// this is a bit hacky - it'd be nice if React exposed an API for this
@@ -27078,7 +27340,7 @@
 
 
 /***/ },
-/* 201 */
+/* 202 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -27099,7 +27361,7 @@
 
 
 /***/ },
-/* 202 */
+/* 203 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -27145,7 +27407,7 @@
 
 
 /***/ },
-/* 203 */
+/* 204 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -27308,7 +27570,7 @@
 
 
 /***/ },
-/* 204 */
+/* 205 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -27407,13 +27669,13 @@
 
 
 /***/ },
-/* 205 */
+/* 206 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use es6";
 
 	var React = __webpack_require__(147);
-	var JourneyProperty = __webpack_require__(206);
+	var JourneyProperty = __webpack_require__(207);
 
 	var JourneyProperties = React.createClass({displayName: "JourneyProperties",
 	  createProperty: function(title, value) {
@@ -27442,7 +27704,7 @@
 	module.exports = JourneyProperties;
 
 /***/ },
-/* 206 */
+/* 207 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use es6";
@@ -27462,15 +27724,15 @@
 	module.exports = JourneyProperty;
 
 /***/ },
-/* 207 */
+/* 208 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use es6";
 
 	var React = __webpack_require__(147);
 
-	var SuggestionInput = __webpack_require__(208);
-	var SuggestionList = __webpack_require__(209);
+	var SuggestionInput = __webpack_require__(209);
+	var SuggestionList = __webpack_require__(210);
 
 	var Geosuggestion = React.createClass({displayName: "Geosuggestion",
 
@@ -27509,7 +27771,7 @@
 	module.exports = Geosuggestion;
 
 /***/ },
-/* 208 */
+/* 209 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use es6";
@@ -27538,14 +27800,14 @@
 	module.exports = SuggestionInput;
 
 /***/ },
-/* 209 */
+/* 210 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use es6";
 
 	var React = __webpack_require__(147);
 
-	var Suggestion = __webpack_require__(210);
+	var Suggestion = __webpack_require__(211);
 
 	var SuggestionList = React.createClass({displayName: "SuggestionList",
 	  generateSuggestions: function() {
@@ -27588,7 +27850,7 @@
 	module.exports = SuggestionList;
 
 /***/ },
-/* 210 */
+/* 211 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use es6";
@@ -27610,7 +27872,53 @@
 	module.exports = Suggestion;
 
 /***/ },
-/* 211 */
+/* 212 */
+/***/ function(module, exports, __webpack_require__) {
+
+	"use es6";
+
+	var React = __webpack_require__(147);
+
+	var Geosuggestion = __webpack_require__(208);
+	var AddressTypeConstants = __webpack_require__(213);
+
+	var JourneyLocationInput = React.createClass({displayName: "JourneyLocationInput",
+	  render: function() {
+	    return (
+	      React.createElement("div", null, 
+	        React.createElement(Geosuggestion, {
+	          input: this.props.startAddress, 
+	          placeholder: "Start Address", 
+	          type: AddressTypeConstants.START, 
+	          onFocus: this.props.handleStartAddressSuggestionsOnFocus, 
+	          onBlur: this.props.handleStartAddressSuggestionsOnBlur, 
+	          onInputKeyDown: this.props.onInputKeyDown, 
+	          onChange: this.props.handleStartLocationSuggestionOnChange, 
+	          suggestions: this.props.startAddressLocationAutocompleteData, 
+	          isHidden: this.props.isStartAddressSuggestionsHidden, 
+	          activeSuggestionIndex: this.props.activeStartAddressSuggestionIndex, 
+	          handleSuggestionOnClick: this.props.handleSuggestionOnClick}), 
+	        React.createElement(Geosuggestion, {
+	          input: this.props.endAddress, 
+	          placeholder: "End Address", 
+	          type: AddressTypeConstants.END, 
+	          onFocus: this.props.handleEndAddressSuggestionsOnFocus, 
+	          onBlur: this.props.handleEndAddressSuggestionsOnBlur, 
+	          onInputKeyDown: this.props.onInputKeyDown, 
+	          onChange: this.props.handleEndLocationSuggestionOnChange, 
+	          suggestions: this.props.endAddressLocationAutocompleteData, 
+	          isHidden: this.props.isEndAddressSuggestionsHidden, 
+	          activeSuggestionIndex: this.props.activeEndAddressSuggestionIndex, 
+	          handleSuggestionOnClick: this.props.handleSuggestionOnClick})
+	      )
+	    );
+	  }
+	});
+
+	module.exports = JourneyLocationInput;
+
+/***/ },
+/* 213 */
 /***/ function(module, exports) {
 
 	"use es6";
@@ -27621,13 +27929,13 @@
 	};
 
 /***/ },
-/* 212 */
+/* 214 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use es6";
 
-	var request = __webpack_require__(178);
-	var Promise = __webpack_require__(181).Promise;
+	var request = __webpack_require__(179);
+	var Promise = __webpack_require__(182).Promise;
 
 	var EstimatesFetcher = {
 	  timeEstimateApi: "https://api.uber.com/v1/estimates/time",

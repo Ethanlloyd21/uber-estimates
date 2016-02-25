@@ -28,7 +28,8 @@
     "flux": "latest",
     "events": "^1.0.2", 
     "react-loading": "latest",
-    "object-assign": "latest"
+    "object-assign": "latest",
+    "react-simpletabs": "latest"
   },
   "devDependencies": {
     "jsx-loader": "^0.12.2",
