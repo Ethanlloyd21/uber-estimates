@@ -53,13 +53,13 @@
 	var Store = __webpack_require__(160);
 	var ActionCreator = __webpack_require__(168);
 
-	var EstimatesTable = __webpack_require__(187);
-	var Geosuggestion = __webpack_require__(204);
+	var JourneyDetails = __webpack_require__(187);
+	var Geosuggestion = __webpack_require__(207);
 
-	var AddressTypeConstants = __webpack_require__(208);
+	var AddressTypeConstants = __webpack_require__(211);
 
 	var CoordinateFetcher = __webpack_require__(186);
-	var EstimatesFetcher = __webpack_require__(209);
+	var EstimatesFetcher = __webpack_require__(212);
 	var LocationAutocompleteFetcher = __webpack_require__(177);
 
 	var App = React.createClass({displayName: "App",
@@ -197,21 +197,6 @@
 	    }
 	  },
 
-	  handleSuggestionOnChange: function(event, type) {
-	    switch (type) {
-	      case AddressTypeConstants.START:
-	        handleStartLocationSuggestionOnChange(event);
-	        break;
-
-	      case AddressTypeConstants.END:
-	        handleEndLocationSuggestionOnChange(event);
-	        break;
-
-	      default:
-	        break;
-	    }
-	  },
-
 	  handleSuggestionOnClick: function(event, type) {
 	    event.persist();
 	    if (type == AddressTypeConstants.START) {
@@ -247,6 +232,15 @@
 	    this.setState({
 	      isEndAddressSuggestionsHidden: true
 	    });
+	  },
+
+	  generateTitleValueMap: function() {
+	    return {
+	      'Start': this.state.formattedStartAddress,
+	      'End': this.state.formattedEndAddress,
+	      'Duration': this.state.duration,
+	      'Distance': this.state.distance
+	    }
 	  },
 
 	  onInputKeyDown: function(event, type) {
@@ -316,33 +310,6 @@
 	  },
 
 	  render: function() {
-	    if (this.state.formattedStartAddress == null) {
-	      var startAddressMessage = null;
-	    } else {
-	      var startAddressMessage = React.createElement("div", {className: "formatted-address"}, "Formatted Start Address: ", this.state.formattedStartAddress);
-	    }
-
-	    if (this.state.formattedEndAddress == null) {
-	      var endAddressMessage = null;
-	    } else {
-	      var endAddressMessage = React.createElement("div", {className: "formatted-address"}, "Formatted End Address: ", this.state.formattedEndAddress);
-	    }
-
-	    if (this.state.duration != null) {
-	      var duration = React.createElement("div", {className: "duration"}, "Duration: ", Math.round(this.state.duration / 60) + " min");
-	    } else {
-	      var duration = null;
-	    }
-
-	    if (this.state.distance != null) {
-	      var distance = React.createElement("div", {className: "distance"}, "Distance: ", this.state.distance + " miles");
-	    } else {
-	      var distance = null;
-	    }
-
-	    if (this.state.errorMessage != null) {
-	      return (React.createElement("div", {className: "error"}, "Error: " + this.state.errorMessage))
-	    }
 
 	    if (this.state.isLoading) {
 	      return (React.createElement(Loading, {className: "loading", type: "spokes", color: "#000000"}));
@@ -373,11 +340,9 @@
 	            isHidden: this.state.isEndAddressSuggestionsHidden, 
 	            activeSuggestionIndex: this.state.activeEndAddressSuggestionIndex, 
 	            handleSuggestionOnClick: this.handleSuggestionOnClick}), 
-	          distance, 
-	          duration, 
-	          React.createElement(EstimatesTable, {className: "estimates-table", estimates: this.state.combinedData}), 
-	          startAddressMessage, 
-	          endAddressMessage
+	          React.createElement(JourneyDetails, {
+	            estimates: this.state.combinedData, 
+	            titleValueMap: this.generateTitleValueMap()})
 	        )
 	      )
 	    }
@@ -25812,7 +25777,34 @@
 	"use es6";
 
 	var React = __webpack_require__(147);
-	var Reactable = __webpack_require__(188);
+
+	var EstimatesTable = __webpack_require__(188);
+	var JourneyProperties = __webpack_require__(205);
+
+	var JourneyDetails = React.createClass({displayName: "JourneyDetails",
+	  render: function() {
+	    return (
+	      React.createElement("div", null, 
+	        React.createElement(EstimatesTable, {
+	          className: "estimates-table", 
+	          estimates: this.props.estimates}), 
+	        React.createElement(JourneyProperties, {
+	          titleValueMap: this.props.titleValueMap})
+	      )
+	    );
+	  }
+	});
+
+	module.exports = JourneyDetails;
+
+/***/ },
+/* 188 */
+/***/ function(module, exports, __webpack_require__) {
+
+	"use es6";
+
+	var React = __webpack_require__(147);
+	var Reactable = __webpack_require__(189);
 	var Table = Reactable.Table;
 
 	var EstimatesTable = React.createClass({displayName: "EstimatesTable",
@@ -25851,7 +25843,7 @@
 	module.exports = EstimatesTable;
 
 /***/ },
-/* 188 */
+/* 189 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -25866,21 +25858,21 @@
 
 	var _react2 = _interopRequireDefault(_react);
 
-	var _reactableTable = __webpack_require__(189);
+	var _reactableTable = __webpack_require__(190);
 
-	var _reactableTr = __webpack_require__(197);
+	var _reactableTr = __webpack_require__(198);
 
-	var _reactableTd = __webpack_require__(198);
+	var _reactableTd = __webpack_require__(199);
 
-	var _reactableTh = __webpack_require__(195);
+	var _reactableTh = __webpack_require__(196);
 
-	var _reactableTfoot = __webpack_require__(201);
+	var _reactableTfoot = __webpack_require__(202);
 
-	var _reactableThead = __webpack_require__(194);
+	var _reactableThead = __webpack_require__(195);
 
-	var _reactableSort = __webpack_require__(203);
+	var _reactableSort = __webpack_require__(204);
 
-	var _reactableUnsafe = __webpack_require__(193);
+	var _reactableUnsafe = __webpack_require__(194);
 
 	_react2['default'].Children.children = function (children) {
 	    return _react2['default'].Children.map(children, function (x) {
@@ -25929,7 +25921,7 @@
 
 
 /***/ },
-/* 189 */
+/* 190 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -25954,21 +25946,21 @@
 
 	var _react2 = _interopRequireDefault(_react);
 
-	var _libFilter_props_from = __webpack_require__(190);
+	var _libFilter_props_from = __webpack_require__(191);
 
-	var _libExtract_data_from = __webpack_require__(191);
+	var _libExtract_data_from = __webpack_require__(192);
 
-	var _unsafe = __webpack_require__(193);
+	var _unsafe = __webpack_require__(194);
 
-	var _thead = __webpack_require__(194);
+	var _thead = __webpack_require__(195);
 
-	var _th = __webpack_require__(195);
+	var _th = __webpack_require__(196);
 
-	var _tr = __webpack_require__(197);
+	var _tr = __webpack_require__(198);
 
-	var _tfoot = __webpack_require__(201);
+	var _tfoot = __webpack_require__(202);
 
-	var _paginator = __webpack_require__(202);
+	var _paginator = __webpack_require__(203);
 
 	var Table = (function (_React$Component) {
 	    _inherits(Table, _React$Component);
@@ -26448,7 +26440,7 @@
 
 
 /***/ },
-/* 190 */
+/* 191 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -26484,7 +26476,7 @@
 
 
 /***/ },
-/* 191 */
+/* 192 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -26494,7 +26486,7 @@
 	});
 	exports.extractDataFrom = extractDataFrom;
 
-	var _stringable = __webpack_require__(192);
+	var _stringable = __webpack_require__(193);
 
 	function extractDataFrom(key, column) {
 	    var value;
@@ -26513,7 +26505,7 @@
 
 
 /***/ },
-/* 192 */
+/* 193 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -26529,7 +26521,7 @@
 
 
 /***/ },
-/* 193 */
+/* 194 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -26576,7 +26568,7 @@
 
 
 /***/ },
-/* 194 */
+/* 195 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -26601,11 +26593,11 @@
 
 	var _react2 = _interopRequireDefault(_react);
 
-	var _th = __webpack_require__(195);
+	var _th = __webpack_require__(196);
 
-	var _filterer = __webpack_require__(196);
+	var _filterer = __webpack_require__(197);
 
-	var _libFilter_props_from = __webpack_require__(190);
+	var _libFilter_props_from = __webpack_require__(191);
 
 	var Thead = (function (_React$Component) {
 	    _inherits(Thead, _React$Component);
@@ -26729,7 +26721,7 @@
 
 
 /***/ },
-/* 195 */
+/* 196 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -26754,9 +26746,9 @@
 
 	var _react2 = _interopRequireDefault(_react);
 
-	var _unsafe = __webpack_require__(193);
+	var _unsafe = __webpack_require__(194);
 
-	var _libFilter_props_from = __webpack_require__(190);
+	var _libFilter_props_from = __webpack_require__(191);
 
 	var Th = (function (_React$Component) {
 	    _inherits(Th, _React$Component);
@@ -26793,7 +26785,7 @@
 
 
 /***/ },
-/* 196 */
+/* 197 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -26890,7 +26882,7 @@
 
 
 /***/ },
-/* 197 */
+/* 198 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -26915,11 +26907,11 @@
 
 	var _react2 = _interopRequireDefault(_react);
 
-	var _td = __webpack_require__(198);
+	var _td = __webpack_require__(199);
 
-	var _libTo_array = __webpack_require__(200);
+	var _libTo_array = __webpack_require__(201);
 
-	var _libFilter_props_from = __webpack_require__(190);
+	var _libFilter_props_from = __webpack_require__(191);
 
 	var Tr = (function (_React$Component) {
 	    _inherits(Tr, _React$Component);
@@ -26979,7 +26971,7 @@
 
 
 /***/ },
-/* 198 */
+/* 199 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -27002,11 +26994,11 @@
 
 	var _react2 = _interopRequireDefault(_react);
 
-	var _libIs_react_component = __webpack_require__(199);
+	var _libIs_react_component = __webpack_require__(200);
 
-	var _libStringable = __webpack_require__(192);
+	var _libStringable = __webpack_require__(193);
 
-	var _unsafe = __webpack_require__(193);
+	var _unsafe = __webpack_require__(194);
 
 	var Td = (function (_React$Component) {
 	    _inherits(Td, _React$Component);
@@ -27069,7 +27061,7 @@
 
 
 /***/ },
-/* 199 */
+/* 200 */
 /***/ function(module, exports) {
 
 	// this is a bit hacky - it'd be nice if React exposed an API for this
@@ -27086,7 +27078,7 @@
 
 
 /***/ },
-/* 200 */
+/* 201 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -27107,7 +27099,7 @@
 
 
 /***/ },
-/* 201 */
+/* 202 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -27153,7 +27145,7 @@
 
 
 /***/ },
-/* 202 */
+/* 203 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -27316,7 +27308,7 @@
 
 
 /***/ },
-/* 203 */
+/* 204 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -27415,15 +27407,70 @@
 
 
 /***/ },
-/* 204 */
+/* 205 */
+/***/ function(module, exports, __webpack_require__) {
+
+	"use es6";
+
+	var React = __webpack_require__(147);
+	var JourneyProperty = __webpack_require__(206);
+
+	var JourneyProperties = React.createClass({displayName: "JourneyProperties",
+	  createProperty: function(title, value) {
+	    return value != null ? (React.createElement(JourneyProperty, {title: title, value: value})) : null;
+	  },
+
+	  createProperties: function(titleValueMap) {
+	    var properties = [];
+	    for (var key in titleValueMap) {
+	      if (titleValueMap.hasOwnProperty(key)) {
+	        properties.push(this.createProperty(key, titleValueMap[key]));
+	      }
+	    }
+	    return properties;
+	  },
+
+	  render: function() {
+	    return (
+	      React.createElement("div", null, 
+	        this.createProperties(this.props.titleValueMap)
+	      )
+	    );
+	  }
+	});
+
+	module.exports = JourneyProperties;
+
+/***/ },
+/* 206 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use es6";
 
 	var React = __webpack_require__(147);
 
-	var SuggestionInput = __webpack_require__(205);
-	var SuggestionList = __webpack_require__(206);
+	var JourneyProperty = React.createClass({displayName: "JourneyProperty",
+	  render: function() {
+	    return (
+	      React.createElement("div", null, 
+	        this.props.title, ": ", this.props.value
+	      )
+	    );
+	  }
+	});
+
+	module.exports = JourneyProperty;
+
+/***/ },
+/* 207 */
+/***/ function(module, exports, __webpack_require__) {
+
+	"use es6";
+
+	var React = __webpack_require__(147);
+
+	var SuggestionInput = __webpack_require__(208);
+	var SuggestionList = __webpack_require__(209);
 
 	var Geosuggestion = React.createClass({displayName: "Geosuggestion",
 
@@ -27462,7 +27509,7 @@
 	module.exports = Geosuggestion;
 
 /***/ },
-/* 205 */
+/* 208 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use es6";
@@ -27491,14 +27538,14 @@
 	module.exports = SuggestionInput;
 
 /***/ },
-/* 206 */
+/* 209 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use es6";
 
 	var React = __webpack_require__(147);
 
-	var Suggestion = __webpack_require__(207);
+	var Suggestion = __webpack_require__(210);
 
 	var SuggestionList = React.createClass({displayName: "SuggestionList",
 	  generateSuggestions: function() {
@@ -27541,7 +27588,7 @@
 	module.exports = SuggestionList;
 
 /***/ },
-/* 207 */
+/* 210 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use es6";
@@ -27563,7 +27610,7 @@
 	module.exports = Suggestion;
 
 /***/ },
-/* 208 */
+/* 211 */
 /***/ function(module, exports) {
 
 	"use es6";
@@ -27574,7 +27621,7 @@
 	};
 
 /***/ },
-/* 209 */
+/* 212 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use es6";

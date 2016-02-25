@@ -7,7 +7,7 @@ var Loading = require('react-loading');
 var Store = require('./stores/Store');
 var ActionCreator = require('./actions/ActionCreator');
 
-var EstimatesTable = require('./components/EstimatesTable');
+var JourneyDetails = require('./components/JourneyDetails');
 var Geosuggestion = require('./components/Geosuggestion');
 
 var AddressTypeConstants = require('./constants/AddressTypeConstants');
@@ -188,6 +188,15 @@ var App = React.createClass({
     });
   },
 
+  generateTitleValueMap: function() {
+    return {
+      'Start': this.state.formattedStartAddress,
+      'End': this.state.formattedEndAddress,
+      'Duration': this.state.duration,
+      'Distance': this.state.distance
+    }
+  },
+
   onInputKeyDown: function(event, type) {
     switch (event.which) {
       case 40: // DOWN
@@ -255,33 +264,6 @@ var App = React.createClass({
   },
 
   render: function() {
-    if (this.state.formattedStartAddress == null) {
-      var startAddressMessage = null;
-    } else {
-      var startAddressMessage = <div className="formatted-address">Formatted Start Address: {this.state.formattedStartAddress}</div>;
-    }
-
-    if (this.state.formattedEndAddress == null) {
-      var endAddressMessage = null;
-    } else {
-      var endAddressMessage = <div className="formatted-address">Formatted End Address: {this.state.formattedEndAddress}</div>;
-    }
-
-    if (this.state.duration != null) {
-      var duration = <div className="duration">Duration: {Math.round(this.state.duration / 60) + " min"}</div>;
-    } else {
-      var duration = null;
-    }
-
-    if (this.state.distance != null) {
-      var distance = <div className="distance">Distance: {this.state.distance + " miles"}</div>;
-    } else {
-      var distance = null;
-    }
-
-    if (this.state.errorMessage != null) {
-      return (<div className="error">{"Error: " + this.state.errorMessage}</div>)
-    }
 
     if (this.state.isLoading) {
       return (<Loading className='loading' type='spokes' color='#000000' />);
@@ -312,11 +294,9 @@ var App = React.createClass({
             isHidden={this.state.isEndAddressSuggestionsHidden}
             activeSuggestionIndex={this.state.activeEndAddressSuggestionIndex} 
             handleSuggestionOnClick={this.handleSuggestionOnClick} />
-          {distance}
-          {duration}
-          <EstimatesTable className="estimates-table" estimates={this.state.combinedData} />
-          {startAddressMessage}
-          {endAddressMessage}
+          <JourneyDetails
+            estimates={this.state.combinedData}
+            titleValueMap={this.generateTitleValueMap()} />
         </div>
       )
     }
