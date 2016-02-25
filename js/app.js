@@ -264,33 +264,6 @@ var App = React.createClass({
   },
 
   render: function() {
-    if (this.state.formattedStartAddress == null) {
-      var startAddressMessage = null;
-    } else {
-      var startAddressMessage = <div className="formatted-address">Formatted Start Address: {this.state.formattedStartAddress}</div>;
-    }
-
-    if (this.state.formattedEndAddress == null) {
-      var endAddressMessage = null;
-    } else {
-      var endAddressMessage = <div className="formatted-address">Formatted End Address: {this.state.formattedEndAddress}</div>;
-    }
-
-    if (this.state.duration != null) {
-      var duration = <div className="duration">Duration: {Math.round(this.state.duration / 60) + " min"}</div>;
-    } else {
-      var duration = null;
-    }
-
-    if (this.state.distance != null) {
-      var distance = <div className="distance">Distance: {this.state.distance + " miles"}</div>;
-    } else {
-      var distance = null;
-    }
-
-    if (this.state.errorMessage != null) {
-      return (<div className="error">{"Error: " + this.state.errorMessage}</div>)
-    }
 
     if (this.state.isLoading) {
       return (<Loading className='loading' type='spokes' color='#000000' />);

@@ -6,7 +6,7 @@ var JourneyProperty = React.createClass({
   render: function() {
     return (
       <div>
-        {this.props.propertyTitle}: {this.props.propertyValue}
+        {this.props.title}: {this.props.value}
       </div>
     );
   }

@@ -5,13 +5,13 @@ var JourneyProperty = require('./JourneyProperty');
 
 var JourneyProperties = React.createClass({
   createProperty: function(title, value) {
-    return (<JourneyProperty title={title} value={value} />);
+    return value != null ? (<JourneyProperty title={title} value={value} />) : null;
   },
 
   createProperties: function(titleValueMap) {
     var properties = [];
     for (var key in titleValueMap) {
-      if (titleValueMap.hasOwnPropertyKey) {
+      if (titleValueMap.hasOwnProperty(key)) {
         properties.push(this.createProperty(key, titleValueMap[key]));
       }
     }
