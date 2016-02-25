@@ -4,12 +4,14 @@ var ReactDOM = require('react-dom');
 var React = require('react');
 var Loading = require('react-loading');
 var Tabs = require('react-simpletabs');
+var Panel = Tabs.Panel;
 
 var Store = require('./stores/Store');
 var ActionCreator = require('./actions/ActionCreator');
 
 var JourneyDetails = require('./components/JourneyDetails');
 var Geosuggestion = require('./components/Geosuggestion');
+var JourneyLocationInput = require('./components/JourneyLocationInput');
 
 var AddressTypeConstants = require('./constants/AddressTypeConstants');
 
@@ -271,37 +273,30 @@ var App = React.createClass({
     } else {
       return (
         <Tabs>
-          <Tabs.Panel title='Location'>
-            <Geosuggestion 
-              input={this.state.startAddress} 
-              placeholder={"Start Address"}
-              type={AddressTypeConstants.START}
-              onFocus={this.handleStartAddressSuggestionsOnFocus}
-              onBlur={this.handleStartAddressSuggestionsOnBlur}
+          <Panel title='Location'>
+            <JourneyLocationInput
+              startAddress={this.state.startAddress}
+              handleStartAddressSuggestionsOnFocus={this.handleStartAddressSuggestionsOnFocus}
+              handleStartAddressSuggestionsOnBlur={this.handleStartAddressSuggestionsOnBlur}
               onInputKeyDown={this.onInputKeyDown} 
-              onChange={this.handleStartLocationSuggestionOnChange}
-              suggestions={this.state.startAddressLocationAutocompleteData} 
-              isHidden={this.state.isStartAddressSuggestionsHidden}
-              activeSuggestionIndex={this.state.activeStartAddressSuggestionIndex} 
-              handleSuggestionOnClick={this.handleSuggestionOnClick} />
-            <Geosuggestion 
-              input={this.state.endAddress} 
-              placeholder={"End Address"}
-              type={AddressTypeConstants.END}
-              onFocus={this.handleEndAddressSuggestionsOnFocus}
-              onBlur={this.handleEndAddressSuggestionsOnBlur}
-              onInputKeyDown={this.onInputKeyDown} 
-              onChange={this.handleEndLocationSuggestionOnChange}
-              suggestions={this.state.endAddressLocationAutocompleteData} 
-              isHidden={this.state.isEndAddressSuggestionsHidden}
-              activeSuggestionIndex={this.state.activeEndAddressSuggestionIndex} 
-              handleSuggestionOnClick={this.handleSuggestionOnClick} />
-          </Tabs.Panel>
-          <Tabs.Panel title='Estimates'>
+              handleStartLocationSuggestionOnChange={this.handleStartLocationSuggestionOnChange}
+              startAddressLocationAutocompleteData={this.state.startAddressLocationAutocompleteData} 
+              isStartAddressSuggestionsHidden={this.state.isStartAddressSuggestionsHidden}
+              activeStartAddressSuggestionIndex={this.state.activeStartAddressSuggestionIndex} 
+              handleSuggestionOnClick={this.handleSuggestionOnClick}
+              endAddress={this.state.endAddress} 
+              handleEndAddressSuggestionsOnFocus={this.handleEndAddressSuggestionsOnFocus}
+              handleEndAddressSuggestionsOnBlur={this.handleEndAddressSuggestionsOnBlur}
+              handleEndLocationSuggestionOnChange={this.handleEndLocationSuggestionOnChange}
+              endAddressLocationAutocompleteData={this.state.endAddressLocationAutocompleteData} 
+              isEndAddressSuggestionsHidden={this.state.isEndAddressSuggestionsHidden}
+              activeEndAddressSuggestionIndex={this.state.activeEndAddressSuggestionIndex} />
+          </Panel>
+          <Panel title='Estimates'>
             <JourneyDetails
               estimates={this.state.combinedData}
               titleValueMap={this.generateTitleValueMap()} />
-          </Tabs.Panel>
+          </Panel>
         </Tabs>
       )
     }
