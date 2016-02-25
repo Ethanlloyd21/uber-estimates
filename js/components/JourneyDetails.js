@@ -9,8 +9,11 @@ var JourneyDetails = React.createClass({
   render: function() {
     return (
       <div>
-        <EstimatesTable />
-        <JourneyProperties titleValueMap={this.props.titleValueMap} />
+        <EstimatesTable 
+          className="estimates-table" 
+          estimates={this.props.estimates} />
+        <JourneyProperties 
+          titleValueMap={this.props.titleValueMap} />
       </div>
     );
   }
