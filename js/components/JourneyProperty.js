@@ -5,8 +5,8 @@ var React = require('react');
 var JourneyProperty = React.createClass({
   render: function() {
     return (
-      <div>
-        {this.props.title}: {this.props.value}
+      <div className="journey-property">
+        <span className="journey-property-title">{this.props.title + ":"}</span> {this.props.value}
       </div>
     );
   }

@@ -96,7 +96,7 @@
 	      };
 	  },
 
-	  componentWillMount() {
+	  componentDidMount() {
 	      ActionCreator.getStartLocationAutocompleteData(this.state.startAddress);
 	      ActionCreator.getEndLocationAutocompleteData(this.state.endAddress);
 
@@ -207,21 +207,24 @@
 	  },
 
 	  handleEndLocationSuggestionMouseDown: function(event) {
-	    this.setState({
-	      ignoreEndAddressBlur: false,
-	      endAddress: event.target.outerText,
-	      isEndAddressSuggestionsHidden: true
-	    });
+	    // Hacky and will change when I put data in store
+
+	    this.state.ignoreEndAddressBlur = false;
+	    this.state.endAddress = event.target.outerText;
+	    this.state.isEndAddressSuggestionsHidden = true;
+	    this.state.ignoreStartAddressBlur = false;
+	    this.state.isStartAddressSuggestionsHidden = true;
 
 	    this.fetchData();
 	  },
 
 	  handleStartLocationSuggestionMouseDown: function(event) {
-	    this.setState({
-	      ignoreStartAddressBlur: false,
-	      startAddress: event.target.outerText,
-	      isStartAddressSuggestionsHidden: true
-	    });
+
+	    this.state.ignoreStartAddressBlur = false;
+	    this.state.startAddress = event.target.outerText;
+	    this.state.isStartAddressSuggestionsHidden = true;
+	    this.state.ignoreEndAddressBlur = false;
+	    this.state.isEndAddressSuggestionsHidden = true;
 
 	    this.fetchData();
 	  },
@@ -254,12 +257,18 @@
 	    }
 	  },
 
+	  handleTabChange: function(selectedIndex, $selectedPanel, $selectedTabMenu) {
+	    this.setState({
+	      activeTabIndex: selectedIndex
+	    });
+	  },
+
 	  generateTitleValueMap: function() {
 	    return {
 	      'Start': this.state.formattedStartAddress,
 	      'End': this.state.formattedEndAddress,
-	      'Duration': this.state.duration,
-	      'Distance': this.state.distance
+	      'Duration': Math.round(this.state.duration / 60) + " min",
+	      'Distance': this.state.distance + " miles"
 	    }
 	  },
 
@@ -331,7 +340,7 @@
 
 	  render: function() {
 	    return (
-	      React.createElement(Tabs, {tabActive: this.state.activeTabIndex}, 
+	      React.createElement(Tabs, {tabActive: this.state.activeTabIndex, onAfterChange: this.handleTabChange}, 
 	          React.createElement(Panel, {title: "Location"}, 
 	            React.createElement(Loader, {loaded: !this.state.isLoading, color: "#FFFFFF"}, 
 	              React.createElement(JourneyLocationInput, {
@@ -27957,8 +27966,8 @@
 	var JourneyProperty = React.createClass({displayName: "JourneyProperty",
 	  render: function() {
 	    return (
-	      React.createElement("div", null, 
-	        this.props.title, ": ", this.props.value
+	      React.createElement("div", {className: "journey-property"}, 
+	        React.createElement("span", {className: "journey-property-title"}, this.props.title + ":"), " ", this.props.value
 	      )
 	    );
 	  }
