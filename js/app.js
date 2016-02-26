@@ -45,7 +45,8 @@ var App = React.createClass({
           ignoreEndAddressBlur: true,
           ignoreStartAddressBlur: true,
           isLoading: false,
-          errorMessage: null
+          errorMessage: null,
+          activeTabIndex: 1
       };
   },
 
@@ -119,7 +120,8 @@ var App = React.createClass({
                         }
                         this.setState({
                           combinedData: combinedData,
-                          isLoading: false
+                          isLoading: false,
+                          activeTabIndex: 2
                         });
                       }
 
@@ -287,7 +289,7 @@ var App = React.createClass({
       return (<Loading className='loading' type='spokes' color='white' />);
     } else {
       return (
-        <Tabs>
+        <Tabs tabActive={this.state.activeTabIndex}>
           <Panel title='Location'>
             <JourneyLocationInput
               startAddress={this.state.startAddress}
