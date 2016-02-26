@@ -21,19 +21,20 @@ var Geosuggestion = React.createClass({
 
   render: function() {
     return (
-      <div className="geosuggest">
+      <div 
+        className="geosuggest" >
         <SuggestionInput 
           input={this.props.input} 
           placeholder={this.props.placeholder}
-          onFocus={this.props.onFocus} 
-          onBlur={this.props.onBlur}
           onInputKeyDown={this.onInputKeyDown} 
+          onBlur={this.props.onBlur} 
+          onFocus={this.props.onFocus}
           onChange={this.onChange} />
         <SuggestionList 
           suggestions={this.props.suggestions} 
           isHidden={this.props.isHidden} 
           activeSuggestionIndex={this.props.activeSuggestionIndex} 
-          handleSuggestionOnClick={this.handleSuggestionOnClick} />
+          handleLocationSuggestionMouseDown={this.props.handleLocationSuggestionMouseDown} />
       </div>
     )
   }
