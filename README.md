@@ -1,6 +1,8 @@
 # [Uber Estimates Chrome Extension](https://chrome.google.com/webstore/detail/uber-estimates/ldbofjhefihijnbcidfhaekdfmkbbocn)
 
-![alt text](http://i.imgur.com/c2JZYUx.png)
+![alt text](http://i.imgur.com/beWO4TZ.png)
+![alt text](http://imgur.com/Eg5eMDU.png)
+![alt text](http://imgur.com/SrZF6PB.png)
 
 ## Usage
 
