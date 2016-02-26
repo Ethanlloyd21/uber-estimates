@@ -6,6 +6,7 @@ var Geosuggestion = require('./Geosuggestion');
 var AddressTypeConstants = require('../constants/AddressTypeConstants');
 
 var JourneyLocationInput = React.createClass({
+
   render: function() {
     return (
       <div>
@@ -20,7 +21,7 @@ var JourneyLocationInput = React.createClass({
           suggestions={this.props.startAddressLocationAutocompleteData} 
           isHidden={this.props.isStartAddressSuggestionsHidden}
           activeSuggestionIndex={this.props.activeStartAddressSuggestionIndex} 
-          handleSuggestionOnClick={this.props.handleSuggestionOnClick} />
+          handleLocationSuggestionMouseDown={this.props.handleStartLocationSuggestionMouseDown} />
         <Geosuggestion 
           input={this.props.endAddress} 
           placeholder={"End Address"}
@@ -32,7 +33,7 @@ var JourneyLocationInput = React.createClass({
           suggestions={this.props.endAddressLocationAutocompleteData} 
           isHidden={this.props.isEndAddressSuggestionsHidden}
           activeSuggestionIndex={this.props.activeEndAddressSuggestionIndex} 
-          handleSuggestionOnClick={this.props.handleSuggestionOnClick} />
+          handleLocationSuggestionMouseDown={this.props.handleEndLocationSuggestionMouseDown} />
       </div>
     );
   }

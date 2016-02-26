@@ -123,19 +123,15 @@ tbody:hover > tr:hover td {
  * The geosuggest module
  */
 .geosuggest {
-  font-size: 12px;
   font-size: 1rem;
   position: relative;
-  width: 400px;
   text-align: left;
-  margin-bottom: 20px;
   margin-left: 38px;
 }
 
 .geosuggest__input {
   color: white;
   width: 320px;
-  font-size: 12px;
   height: 25px;
   border: 2px solid transparent;
   box-shadow: 0 0 1px #3d464d;
@@ -150,10 +146,8 @@ tbody:hover > tr:hover td {
 .geosuggest__input:focus {
   border-color: #267dc0;
   box-shadow: 0 0 0 transparent;
-  font-size: 12px;
 }
 .geosuggest__suggests {
-  font-size: 12px;
   position: absolute;
   width: 320px;
   top: 100%;

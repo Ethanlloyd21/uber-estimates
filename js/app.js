@@ -42,6 +42,8 @@ var App = React.createClass({
           activeEndAddressSuggestionIndex: 0,
           isStartAddressSuggestionsHidden: true,
           isEndAddressSuggestionsHidden: true,
+          ignoreEndAddressBlur: true,
+          ignoreStartAddressBlur: true,
           isLoading: false,
           errorMessage: null
       };
@@ -140,6 +142,7 @@ var App = React.createClass({
       this.setState({
         startAddressLocationAutocompleteData: Store.getStartLocationAutocompleteData(),
         startAddress: event.target.value,
+        isStartAddressSuggestionsHidden: false
       });
     }
   },
@@ -150,21 +153,29 @@ var App = React.createClass({
       this.setState({
         endAddressLocationAutocompleteData: Store.getEndLocationAutocompleteData(),
         endAddress: event.target.value,
+        isEndAddressSuggestionsHidden: false
       });
     }
   },
 
-  handleSuggestionOnClick: function(event, type) {
-    event.persist();
-    if (type == AddressTypeConstants.START) {
-      this.setState({
-        startAddress: event.target.outerText
-      });
-    } else {
-      this.setState({
-        endAddress: event.target.outerText
-      });
-    }
+  handleEndLocationSuggestionMouseDown: function(event) {
+    this.setState({
+      ignoreEndAddressBlur: false,
+      endAddress: event.target.outerText,
+      isEndAddressSuggestionsHidden: true
+    });
+
+    this.fetchData();
+  },
+
+  handleStartLocationSuggestionMouseDown: function(event) {
+    this.setState({
+      ignoreStartAddressBlur: false,
+      startAddress: event.target.outerText,
+      isStartAddressSuggestionsHidden: true
+    });
+
+    this.fetchData();
   },
 
   handleStartAddressSuggestionsOnFocus: function() {
@@ -174,9 +185,11 @@ var App = React.createClass({
   },
 
   handleStartAddressSuggestionsOnBlur: function() {
-    this.setState({
-      isStartAddressSuggestionsHidden: true
-    });
+    if (!this.state.ignoreStartAddressBlur) {
+      this.setState({
+        isStartAddressSuggestionsHidden: true
+      });
+    }
   },
 
   handleEndAddressSuggestionsOnFocus: function() {
@@ -186,9 +199,11 @@ var App = React.createClass({
   },
 
   handleEndAddressSuggestionsOnBlur: function() {
-    this.setState({
-      isEndAddressSuggestionsHidden: true
-    });
+    if (!this.state.ignoreEndAddressBlur) {
+      this.setState({
+        isEndAddressSuggestionsHidden: true
+      });
+    }
   },
 
   generateTitleValueMap: function() {
@@ -269,7 +284,7 @@ var App = React.createClass({
   render: function() {
 
     if (this.state.isLoading) {
-      return (<Loading className='loading' type='spokes' color='#000000' />);
+      return (<Loading className='loading' type='spokes' color='white' />);
     } else {
       return (
         <Tabs>
@@ -280,14 +295,15 @@ var App = React.createClass({
               handleStartAddressSuggestionsOnBlur={this.handleStartAddressSuggestionsOnBlur}
               onInputKeyDown={this.onInputKeyDown} 
               handleStartLocationSuggestionOnChange={this.handleStartLocationSuggestionOnChange}
+              handleStartLocationSuggestionMouseDown={this.handleStartLocationSuggestionMouseDown}
               startAddressLocationAutocompleteData={this.state.startAddressLocationAutocompleteData} 
               isStartAddressSuggestionsHidden={this.state.isStartAddressSuggestionsHidden}
               activeStartAddressSuggestionIndex={this.state.activeStartAddressSuggestionIndex} 
-              handleSuggestionOnClick={this.handleSuggestionOnClick}
               endAddress={this.state.endAddress} 
               handleEndAddressSuggestionsOnFocus={this.handleEndAddressSuggestionsOnFocus}
               handleEndAddressSuggestionsOnBlur={this.handleEndAddressSuggestionsOnBlur}
               handleEndLocationSuggestionOnChange={this.handleEndLocationSuggestionOnChange}
+              handleEndLocationSuggestionMouseDown={this.handleEndLocationSuggestionMouseDown}
               endAddressLocationAutocompleteData={this.state.endAddressLocationAutocompleteData} 
               isEndAddressSuggestionsHidden={this.state.isEndAddressSuggestionsHidden}
               activeEndAddressSuggestionIndex={this.state.activeEndAddressSuggestionIndex} />

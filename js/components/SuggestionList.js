@@ -19,7 +19,7 @@ var SuggestionList = React.createClass({
           key={suggestion.description}
           className={className} 
           value={suggestion.description} 
-          handleSuggestionOnClick={this.props.handleSuggestionOnClick} />
+          handleLocationSuggestionMouseDown={this.props.handleLocationSuggestionMouseDown} />
       );
       counter++;
     }.bind(this));
@@ -28,14 +28,14 @@ var SuggestionList = React.createClass({
 
   render: function() {
 
-    if (this.props.isHidden) {
+    if (this.props.isHidden || this.props.suggestions.length == 0) {
       var className="geosuggest__suggests--hidden";
     } else {
       var className="geosuggest__suggests";
     }
 
     return (
-      <ul className={className}>
+      <ul className={className} >
         {this.generateSuggestions()}
       </ul>
     )
