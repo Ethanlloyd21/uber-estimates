@@ -50,7 +50,7 @@ var App = React.createClass({
       };
   },
 
-  componentWillMount() {
+  componentDidMount() {
       ActionCreator.getStartLocationAutocompleteData(this.state.startAddress);
       ActionCreator.getEndLocationAutocompleteData(this.state.endAddress);
 
@@ -161,21 +161,24 @@ var App = React.createClass({
   },
 
   handleEndLocationSuggestionMouseDown: function(event) {
-    this.setState({
-      ignoreEndAddressBlur: false,
-      endAddress: event.target.outerText,
-      isEndAddressSuggestionsHidden: true
-    });
+    // Hacky and will change when I put data in store
+
+    this.state.ignoreEndAddressBlur = false;
+    this.state.endAddress = event.target.outerText;
+    this.state.isEndAddressSuggestionsHidden = true;
+    this.state.ignoreStartAddressBlur = false;
+    this.state.isStartAddressSuggestionsHidden = true;
 
     this.fetchData();
   },
 
   handleStartLocationSuggestionMouseDown: function(event) {
-    this.setState({
-      ignoreStartAddressBlur: false,
-      startAddress: event.target.outerText,
-      isStartAddressSuggestionsHidden: true
-    });
+
+    this.state.ignoreStartAddressBlur = false;
+    this.state.startAddress = event.target.outerText;
+    this.state.isStartAddressSuggestionsHidden = true;
+    this.state.ignoreEndAddressBlur = false;
+    this.state.isEndAddressSuggestionsHidden = true;
 
     this.fetchData();
   },
@@ -208,12 +211,18 @@ var App = React.createClass({
     }
   },
 
+  handleTabChange: function(selectedIndex, $selectedPanel, $selectedTabMenu) {
+    this.setState({
+      activeTabIndex: selectedIndex
+    });
+  },
+
   generateTitleValueMap: function() {
     return {
       'Start': this.state.formattedStartAddress,
       'End': this.state.formattedEndAddress,
-      'Duration': this.state.duration,
-      'Distance': this.state.distance
+      'Duration': Math.round(this.state.duration / 60) + " min",
+      'Distance': this.state.distance + " miles"
     }
   },
 
@@ -285,7 +294,7 @@ var App = React.createClass({
 
   render: function() {
     return (
-      <Tabs tabActive={this.state.activeTabIndex}>
+      <Tabs tabActive={this.state.activeTabIndex} onAfterChange={this.handleTabChange}>
           <Panel title='Location'>
             <Loader loaded={!this.state.isLoading} color="#FFFFFF">
               <JourneyLocationInput
