@@ -91,7 +91,8 @@
 	          ignoreEndAddressBlur: true,
 	          ignoreStartAddressBlur: true,
 	          isLoading: false,
-	          errorMessage: null
+	          errorMessage: null,
+	          activeTabIndex: 1
 	      };
 	  },
 
@@ -165,7 +166,8 @@
 	                        }
 	                        this.setState({
 	                          combinedData: combinedData,
-	                          isLoading: false
+	                          isLoading: false,
+	                          activeTabIndex: 2
 	                        });
 	                      }
 
@@ -333,7 +335,7 @@
 	      return (React.createElement(Loading, {className: "loading", type: "spokes", color: "white"}));
 	    } else {
 	      return (
-	        React.createElement(Tabs, null, 
+	        React.createElement(Tabs, {tabActive: this.state.activeTabIndex}, 
 	          React.createElement(Panel, {title: "Location"}, 
 	            React.createElement(JourneyLocationInput, {
 	              startAddress: this.state.startAddress, 
