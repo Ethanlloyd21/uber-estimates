@@ -2,6 +2,7 @@ var Dispatcher = require('../core/Dispatcher');
 var DeepCopy = require("deepcopy");
 var LocationAutocompleteFetcher = require('../data/LocationAutocompleteFetcher');
 var CoordinateFetcher = require('../data/CoordinateFetcher');
+var IpAddressFetcher = require('../data/IpAddressFetcher');
 
 var ActionConstants = require('../constants/ActionConstants');
 
@@ -48,6 +49,17 @@ var ActionCreator = {
         });
     });
   },
+
+  getIpAddress: function() {
+    IpAddressFetcher
+      .fetchIpAddress()
+      .then(function (ipAddressData) {
+        Dispatcher.handleViewAction({
+          actionType: ActionConstants.GET_IP_ADDRESS,
+          ipAddressData: DeepCopy(ipAddressData)
+        });
+    });
+  }
 };
 
 module.exports = ActionCreator;
