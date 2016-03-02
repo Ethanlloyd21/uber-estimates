@@ -275,6 +275,7 @@ var App = React.createClass({
         }
         break;
       case 13: // ENTER
+      case 9: // TAB
         if (type == AddressTypeConstants.START) {
           var locationAutocompleteData = this.state.startAddressLocationAutocompleteData;
           this.state.startAddress = locationAutocompleteData[this.state.activeStartAddressSuggestionIndex].description;
