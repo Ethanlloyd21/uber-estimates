@@ -75,6 +75,11 @@ var ActionCreator = {
           costEstimatesData: DeepCopy(costEstimates)
         });
     });
+  },
+
+  getEstimates: function(startLatitude, startLongitude, endLatitude, endLongitude) {
+    getTimeEstimates(startLatitude, startLongitude);
+    getCostEstimates(startLatitude, startLongitude, endLatitude, endLongitude);
   }
 };
 

@@ -10,6 +10,8 @@ var _startLocationAutocompleteData = [];
 var _endLocationAutocompleteData = [];
 var _startLocationCoordinates = [];
 var _endLocationCoordinates = [];
+var _timeEstimatesData = [];
+var _costEstimatesData = [];
 
 /**
  * Set the values for playerSalaries that will be used
@@ -31,6 +33,14 @@ function setStartLocationCoordinates (coordinates) {
 
 function setEndLocationCoordinates (coordinates) {
   _endLocationCoordinates = coordinates;
+}
+
+function setTimeEstimatesData (timeEstimatesData) {
+  _timeEstimatesData = timeEstimatesData;
+}
+
+function setCostEstimatesData (costEstimatesData) {
+  _costEstimatesData = costEstimatesData;
 }
 
 var Store = assign({}, EventEmitter.prototype, {
