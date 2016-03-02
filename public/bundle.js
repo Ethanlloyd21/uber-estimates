@@ -108,22 +108,87 @@
 
 	  getData: function() {
 	    if (this.state.startAddress != null && this.state.endAddress != null) {
+
+	      this.setState({
+	        isLoading: true
+	      });
+
 	      ActionCreator.getLocationCoordinates(this.state.startAddress, this.state.endAddress);
 
 	      var startLocationCoordinatesData = Store.getStartLocationCoordinates();
 	      var endLocationCoordinatesData = Store.getEndLocationCoordinates();
 
-	      var startLatitude = startLocationCoordinatesData.results[0].geometry.location.lat;
-	      var startLongitude = startLocationCoordinatesData.results[0].geometry.location.lng;
+	      if ('results' in startLocationCoordinatesData && startLocationCoordinatesData.results.length > 1 && 'results' in endLocationCoordinatesData && endLocationCoordinatesData.results.length > 1) {
+	        var startLatitude = startLocationCoordinatesData.results[0].geometry.location.lat;
+	        var startLongitude = startLocationCoordinatesData.results[0].geometry.location.lng;
+	        var formattedStartAddress = startLocationCoordinatesData.results[0].formatted_address;
 
-	      var endLatitude = endLocationCoordinatesData.results[0].geometry.location.lat;
-	      var endLongitude = endLocationCoordinatesData.results[0].geometry.location.lng;
+	        var endLatitude = endLocationCoordinatesData.results[0].geometry.location.lat;
+	        var endLongitude = endLocationCoordinatesData.results[0].geometry.location.lng;
+	        var formattedEndAddress = endLocationCoordinatesData.results[0].formatted_address;
 
-	      ActionCreator.getEstimates(startLatitude, startLongitude, endLatitude, endLongitude);
+	        ActionCreator.getEstimates(startLatitude, startLongitude, endLatitude, endLongitude);
 
-	      Store.getTimeEstimatesData();
-	      Store.getCostEstimatesData();
+	        var timeEstimatesData = Store.getTimeEstimatesData();
+	        var costEstimatesData = Store.getCostEstimatesData();
+
+	        var timeEstimates = timeEstimatesData.times;
+	        var costEstimates = costEstimates.prices;
+
+	        var errorMessage = null;
+	        if ('message' in costEstimates) {
+	          var errorMessage = costEstimates.message;
+	        } else {
+	          var combinedData = [];
+	          for (var i = 0; i < costEstimates.length; i++) {
+	            var costEstimate = costEstimates[i];
+	            var displayName = costEstimate.display_name;
+	            var distance = costEstimate.distance;
+	            var duration = costEstimate.duration;
+	            var highEstimate = costEstimate.high_estimate;
+	            var lowEstimate = costEstimate.low_estimate;
+	            var minimum = costEstimate.minimum;
+	            for (var j = 0; j < timeEstimates.length; j++) {
+	              var timeEstimate = timeEstimates[j];
+	              if (displayName != "uberTAXI" && timeEstimate.display_name == displayName) {
+	                var wait = timeEstimate.estimate;
+	                var roundedWait = Math.round(wait / 60);
+	                var roundedWaitStr = roundedWait + " min";
+	                combinedData[i] = {
+	                  Option: displayName,
+	                  High: "$" + highEstimate,
+	                  Low: "$" + lowEstimate,
+	                  Minimum: "$" + minimum,
+	                  Wait: roundedWaitStr
+	                };
+	              }
+	            }
+	          }
+	        }
+
+	        this.setState({
+	          combinedData: combinedData,
+	          isLoading: false,
+	          activeTabIndex: 2,
+	          distance: distance,
+	          duration: duration,
+	          errorMessage: errorMessage,
+	          timeEstimates: timeEstimates,
+	          costEstimates: costEstimates,
+	          formattedStartAddress: formattedStartAddress,
+	          startLatitude: startLatitude,
+	          startLongitude: startLongitude,
+	          formattedEndAddress: formattedEndAddress,
+	          endLatitude: endLatitude,
+	          endLongitude: endLongitude
+	        });
+	      }
 	    }
+
+	    this.setState({
+	      activeEndAddressSuggestionIndex: 0,
+	      activeStartAddressSuggestionIndex: 0
+	    });
 	  },
 
 	  fetchData: function() {
@@ -235,7 +300,7 @@
 	    this.state.ignoreStartAddressBlur = false;
 	    this.state.isStartAddressSuggestionsHidden = true;
 
-	    this.fetchData();
+	    this.getData();
 	  },
 
 	  handleStartLocationSuggestionMouseDown: function(event) {
@@ -246,7 +311,7 @@
 	    this.state.ignoreEndAddressBlur = false;
 	    this.state.isEndAddressSuggestionsHidden = true;
 
-	    this.fetchData();
+	    this.getData();
 	  },
 
 	  handleStartAddressSuggestionsOnFocus: function() {
@@ -350,7 +415,7 @@
 	          this.state.endAddress = locationAutocompleteData[this.state.activeEndAddressSuggestionIndex].description;
 	          this.state.isEndAddressSuggestionsHidden = true;
 	        }
-	        this.fetchData();
+	        this.getData();
 	        break;
 
 	      default:
@@ -359,7 +424,6 @@
 	  },
 
 	  render: function() {
-	    this.getData();
 	    return (
 	      React.createElement(Tabs, {tabActive: this.state.activeTabIndex, onAfterChange: this.handleTabChange}, 
 	          React.createElement(Panel, {title: "Location"}, 
