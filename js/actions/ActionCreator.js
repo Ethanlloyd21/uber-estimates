@@ -51,8 +51,8 @@ var ActionCreator = {
   },
 
   getLocationCoordinates: function(startLocation, endLocation) {
-    getStartLocationCoordinates(startLocation);
-    getEndLocationCoordinates(endLocation);
+    this.getStartLocationCoordinates(startLocation);
+    this.getEndLocationCoordinates(endLocation);
   },
 
   getTimeEstimates: function(latitude, longitude) {
@@ -78,8 +78,8 @@ var ActionCreator = {
   },
 
   getEstimates: function(startLatitude, startLongitude, endLatitude, endLongitude) {
-    getTimeEstimates(startLatitude, startLongitude);
-    getCostEstimates(startLatitude, startLongitude, endLatitude, endLongitude);
+    this.getTimeEstimates(startLatitude, startLongitude);
+    this.getCostEstimates(startLatitude, startLongitude, endLatitude, endLongitude);
   }
 };
 

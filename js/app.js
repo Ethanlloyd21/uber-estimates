@@ -60,6 +60,26 @@ var App = React.createClass({
       });
   },
 
+  getData: function() {
+    if (this.state.startAddress != null && this.state.endAddress != null) {
+      ActionCreator.getLocationCoordinates(this.state.startAddress, this.state.endAddress);
+
+      var startLocationCoordinatesData = Store.getStartLocationCoordinates();
+      var endLocationCoordinatesData = Store.getEndLocationCoordinates();
+
+      var startLatitude = startLocationCoordinatesData.results[0].geometry.location.lat;
+      var startLongitude = startLocationCoordinatesData.results[0].geometry.location.lng;
+
+      var endLatitude = endLocationCoordinatesData.results[0].geometry.location.lat;
+      var endLongitude = endLocationCoordinatesData.results[0].geometry.location.lng;
+
+      ActionCreator.getEstimates(startLatitude, startLongitude, endLatitude, endLongitude);
+
+      Store.getTimeEstimatesData();
+      Store.getCostEstimatesData();
+    }
+  },
+
   fetchData: function() {
     // Uber Hacky data fetching
 
@@ -293,6 +313,7 @@ var App = React.createClass({
   },
 
   render: function() {
+    this.getData();
     return (
       <Tabs tabActive={this.state.activeTabIndex} onAfterChange={this.handleTabChange}>
           <Panel title='Location'>

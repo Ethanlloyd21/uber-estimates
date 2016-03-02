@@ -106,6 +106,26 @@
 	      });
 	  },
 
+	  getData: function() {
+	    if (this.state.startAddress != null && this.state.endAddress != null) {
+	      ActionCreator.getLocationCoordinates(this.state.startAddress, this.state.endAddress);
+
+	      var startLocationCoordinatesData = Store.getStartLocationCoordinates();
+	      var endLocationCoordinatesData = Store.getEndLocationCoordinates();
+
+	      var startLatitude = startLocationCoordinatesData.results[0].geometry.location.lat;
+	      var startLongitude = startLocationCoordinatesData.results[0].geometry.location.lng;
+
+	      var endLatitude = endLocationCoordinatesData.results[0].geometry.location.lat;
+	      var endLongitude = endLocationCoordinatesData.results[0].geometry.location.lng;
+
+	      ActionCreator.getEstimates(startLatitude, startLongitude, endLatitude, endLongitude);
+
+	      Store.getTimeEstimatesData();
+	      Store.getCostEstimatesData();
+	    }
+	  },
+
 	  fetchData: function() {
 	    // Uber Hacky data fetching
 
@@ -339,6 +359,7 @@
 	  },
 
 	  render: function() {
+	    this.getData();
 	    return (
 	      React.createElement(Tabs, {tabActive: this.state.activeTabIndex, onAfterChange: this.handleTabChange}, 
 	          React.createElement(Panel, {title: "Location"}, 
@@ -20831,6 +20852,14 @@
 
 	  getEndLocationCoordinates: function() {
 	    return _endLocationCoordinates;
+	  },
+
+	  getTimeEstimatesData: function() {
+	    return _timeEstimatesData;
+	  },
+
+	  getCostEstimatesData: function() {
+	    return _costEstimatesData;
 	  }
 
 	});
@@ -20853,6 +20882,14 @@
 
 	    case ActionConstants.GET_END_LOCATION_COORDINATES:
 	      setEndLocationCoordinates(action.coordinateData);
+	      break;
+
+	    case ActionConstants.GET_TIME_ESTIMATES:
+	      setTimeEstimatesData(action.timeEstimatesData);
+	      break;
+
+	    case ActionConstants.GET_COST_ESTIMATES:
+	      setCostEstimatesData(action.costEstimatesData);
 	      break;
 
 	    default:
@@ -21625,8 +21662,8 @@
 	  },
 
 	  getLocationCoordinates: function(startLocation, endLocation) {
-	    getStartLocationCoordinates(startLocation);
-	    getEndLocationCoordinates(endLocation);
+	    this.getStartLocationCoordinates(startLocation);
+	    this.getEndLocationCoordinates(endLocation);
 	  },
 
 	  getTimeEstimates: function(latitude, longitude) {
@@ -21652,8 +21689,8 @@
 	  },
 
 	  getEstimates: function(startLatitude, startLongitude, endLatitude, endLongitude) {
-	    getTimeEstimates(startLatitude, startLongitude);
-	    getCostEstimates(startLatitude, startLongitude, endLatitude, endLongitude);
+	    this.getTimeEstimates(startLatitude, startLongitude);
+	    this.getCostEstimates(startLatitude, startLongitude, endLatitude, endLongitude);
 	  }
 	};
 
