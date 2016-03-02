@@ -55,14 +55,14 @@
 	var Store = __webpack_require__(162);
 	var ActionCreator = __webpack_require__(170);
 
-	var JourneyDetails = __webpack_require__(189);
-	var Geosuggestion = __webpack_require__(209);
-	var JourneyLocationInput = __webpack_require__(213);
+	var JourneyDetails = __webpack_require__(190);
+	var Geosuggestion = __webpack_require__(210);
+	var JourneyLocationInput = __webpack_require__(214);
 
-	var AddressTypeConstants = __webpack_require__(214);
+	var AddressTypeConstants = __webpack_require__(215);
 
 	var CoordinateFetcher = __webpack_require__(188);
-	var EstimatesFetcher = __webpack_require__(215);
+	var EstimatesFetcher = __webpack_require__(189);
 	var LocationAutocompleteFetcher = __webpack_require__(179);
 
 	var App = React.createClass({displayName: "App",
@@ -20754,6 +20754,8 @@
 	var _endLocationAutocompleteData = [];
 	var _startLocationCoordinates = [];
 	var _endLocationCoordinates = [];
+	var _timeEstimatesData = [];
+	var _costEstimatesData = [];
 
 	/**
 	 * Set the values for playerSalaries that will be used
@@ -20775,6 +20777,14 @@
 
 	function setEndLocationCoordinates (coordinates) {
 	  _endLocationCoordinates = coordinates;
+	}
+
+	function setTimeEstimatesData (timeEstimatesData) {
+	  _timeEstimatesData = timeEstimatesData;
+	}
+
+	function setCostEstimatesData (costEstimatesData) {
+	  _costEstimatesData = costEstimatesData;
 	}
 
 	var Store = assign({}, EventEmitter.prototype, {
@@ -21249,7 +21259,9 @@
 	  GET_START_LOCATION_AUTOCOMPLETE: "GET_START_LOCATION_AUTOCOMPLETE",
 	  GET_END_LOCATION_AUTOCOMPLETE: "GET_END_LOCATION_AUTOCOMPLETE",
 	  GET_START_LOCATION_COORDINATES: "GET_START_LOCATION_COORDINATES",
-	  GET_END_LOCATION_COORDINATES: "GET_END_LOCATION_COORDINATES"
+	  GET_END_LOCATION_COORDINATES: "GET_END_LOCATION_COORDINATES",
+	  GET_TIME_ESTIMATES: "GET_TIME_ESTIMATES",
+	  GET_COST_ESTIMATES: "GET_COST_ESTIMATES"
 	};
 
 /***/ },
@@ -21564,6 +21576,7 @@
 	var DeepCopy = __webpack_require__(171);
 	var LocationAutocompleteFetcher = __webpack_require__(179);
 	var CoordinateFetcher = __webpack_require__(188);
+	var EstimatesFetcher = __webpack_require__(189);
 
 	var ActionConstants = __webpack_require__(168);
 
@@ -21610,6 +21623,38 @@
 	        });
 	    });
 	  },
+
+	  getLocationCoordinates: function(startLocation, endLocation) {
+	    getStartLocationCoordinates(startLocation);
+	    getEndLocationCoordinates(endLocation);
+	  },
+
+	  getTimeEstimates: function(latitude, longitude) {
+	    EstimatesFetcher
+	      .fetchTimeEstimates(latitude, longitude)
+	      .then(function (timeEstimates) {
+	        Dispatcher.handleViewAction({
+	          actionType: ActionConstants.GET_TIME_ESTIMATES,
+	          timeEstimatesData: DeepCopy(timeEstimates)
+	        });
+	    });
+	  },
+
+	  getCostEstimates: function(startLatitude, startLongitude, endLatitude, endLongitude) {
+	    EstimatesFetcher
+	      .fetchCostEstimates(startLatitude, startLongitude, endLatitude, endLongitude)
+	      .then(function (costEstimates) {
+	        Dispatcher.handleViewAction({
+	          actionType: ActionConstants.GET_COST_ESTIMATES,
+	          costEstimatesData: DeepCopy(costEstimates)
+	        });
+	    });
+	  },
+
+	  getEstimates: function(startLatitude, startLongitude, endLatitude, endLongitude) {
+	    getTimeEstimates(startLatitude, startLongitude);
+	    getCostEstimates(startLatitude, startLongitude, endLatitude, endLongitude);
+	  }
 	};
 
 	module.exports = ActionCreator;
@@ -26290,10 +26335,65 @@
 
 	"use es6";
 
+	var request = __webpack_require__(180);
+	var Promise = __webpack_require__(183).Promise;
+
+	var EstimatesFetcher = {
+	  timeEstimateApi: "https://api.uber.com/v1/estimates/time",
+	  costEstimateApi: "https://api.uber.com/v1/estimates/price",
+	  serverToken: "We0MNCaIpx00F_TUopt4jgL9BzW3bWWt16aYM4mh",
+
+	  getTimeEstimatesUrl: function(startLatitude, startLongitude) {
+	    return this.timeEstimateApi + "?start_latitude=" + startLatitude + "&start_longitude=" + startLongitude + "&server_token=" + this.serverToken;
+	  },
+
+	  getCostEstimatesUrl: function(startLatitude, startLongitude, endLatitude, endLongitude) {
+	    return this.costEstimateApi + "?start_latitude=" + startLatitude + "&start_longitude=" + startLongitude + "&end_latitude=" + endLatitude + "&end_longitude=" + endLongitude + "&server_token=" + this.serverToken;
+	  },
+
+	  fetchTimeEstimates: function(startLatitude, startLongitude) {
+	    var url = this.getTimeEstimatesUrl(startLatitude, startLongitude);
+	    return new Promise(function (resolve, reject) {
+	      request
+	        .get(url)
+	        .end(function (err, res) {
+	          if (res.status === 404) {
+	            reject();
+	          } else {
+	            resolve(res.body);
+	          }
+	      });
+	    });
+	  },
+
+	  fetchCostEstimates: function(startLatitude, startLongitude, endLatitude, endLongitude) {
+	    var url = this.getCostEstimatesUrl(startLatitude, startLongitude, endLatitude, endLongitude);
+	    return new Promise(function (resolve, reject) {
+	      request
+	        .get(url)
+	        .end(function (err, res) {
+	          if (res.status === 404) {
+	            reject();
+	          } else {
+	            resolve(res.body);
+	          }
+	      });
+	    });
+	  }
+	};
+
+	module.exports = EstimatesFetcher;
+
+/***/ },
+/* 190 */
+/***/ function(module, exports, __webpack_require__) {
+
+	"use es6";
+
 	var React = __webpack_require__(147);
 
-	var EstimatesTable = __webpack_require__(190);
-	var JourneyProperties = __webpack_require__(207);
+	var EstimatesTable = __webpack_require__(191);
+	var JourneyProperties = __webpack_require__(208);
 
 	var JourneyDetails = React.createClass({displayName: "JourneyDetails",
 	  render: function() {
@@ -26312,13 +26412,13 @@
 	module.exports = JourneyDetails;
 
 /***/ },
-/* 190 */
+/* 191 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use es6";
 
 	var React = __webpack_require__(147);
-	var Reactable = __webpack_require__(191);
+	var Reactable = __webpack_require__(192);
 	var Table = Reactable.Table;
 
 	var EstimatesTable = React.createClass({displayName: "EstimatesTable",
@@ -26357,7 +26457,7 @@
 	module.exports = EstimatesTable;
 
 /***/ },
-/* 191 */
+/* 192 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -26372,21 +26472,21 @@
 
 	var _react2 = _interopRequireDefault(_react);
 
-	var _reactableTable = __webpack_require__(192);
+	var _reactableTable = __webpack_require__(193);
 
-	var _reactableTr = __webpack_require__(200);
+	var _reactableTr = __webpack_require__(201);
 
-	var _reactableTd = __webpack_require__(201);
+	var _reactableTd = __webpack_require__(202);
 
-	var _reactableTh = __webpack_require__(198);
+	var _reactableTh = __webpack_require__(199);
 
-	var _reactableTfoot = __webpack_require__(204);
+	var _reactableTfoot = __webpack_require__(205);
 
-	var _reactableThead = __webpack_require__(197);
+	var _reactableThead = __webpack_require__(198);
 
-	var _reactableSort = __webpack_require__(206);
+	var _reactableSort = __webpack_require__(207);
 
-	var _reactableUnsafe = __webpack_require__(196);
+	var _reactableUnsafe = __webpack_require__(197);
 
 	_react2['default'].Children.children = function (children) {
 	    return _react2['default'].Children.map(children, function (x) {
@@ -26435,7 +26535,7 @@
 
 
 /***/ },
-/* 192 */
+/* 193 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -26460,21 +26560,21 @@
 
 	var _react2 = _interopRequireDefault(_react);
 
-	var _libFilter_props_from = __webpack_require__(193);
+	var _libFilter_props_from = __webpack_require__(194);
 
-	var _libExtract_data_from = __webpack_require__(194);
+	var _libExtract_data_from = __webpack_require__(195);
 
-	var _unsafe = __webpack_require__(196);
+	var _unsafe = __webpack_require__(197);
 
-	var _thead = __webpack_require__(197);
+	var _thead = __webpack_require__(198);
 
-	var _th = __webpack_require__(198);
+	var _th = __webpack_require__(199);
 
-	var _tr = __webpack_require__(200);
+	var _tr = __webpack_require__(201);
 
-	var _tfoot = __webpack_require__(204);
+	var _tfoot = __webpack_require__(205);
 
-	var _paginator = __webpack_require__(205);
+	var _paginator = __webpack_require__(206);
 
 	var Table = (function (_React$Component) {
 	    _inherits(Table, _React$Component);
@@ -26954,7 +27054,7 @@
 
 
 /***/ },
-/* 193 */
+/* 194 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -26990,7 +27090,7 @@
 
 
 /***/ },
-/* 194 */
+/* 195 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -27000,7 +27100,7 @@
 	});
 	exports.extractDataFrom = extractDataFrom;
 
-	var _stringable = __webpack_require__(195);
+	var _stringable = __webpack_require__(196);
 
 	function extractDataFrom(key, column) {
 	    var value;
@@ -27019,7 +27119,7 @@
 
 
 /***/ },
-/* 195 */
+/* 196 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -27035,7 +27135,7 @@
 
 
 /***/ },
-/* 196 */
+/* 197 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -27082,7 +27182,7 @@
 
 
 /***/ },
-/* 197 */
+/* 198 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -27107,11 +27207,11 @@
 
 	var _react2 = _interopRequireDefault(_react);
 
-	var _th = __webpack_require__(198);
+	var _th = __webpack_require__(199);
 
-	var _filterer = __webpack_require__(199);
+	var _filterer = __webpack_require__(200);
 
-	var _libFilter_props_from = __webpack_require__(193);
+	var _libFilter_props_from = __webpack_require__(194);
 
 	var Thead = (function (_React$Component) {
 	    _inherits(Thead, _React$Component);
@@ -27235,7 +27335,7 @@
 
 
 /***/ },
-/* 198 */
+/* 199 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -27260,9 +27360,9 @@
 
 	var _react2 = _interopRequireDefault(_react);
 
-	var _unsafe = __webpack_require__(196);
+	var _unsafe = __webpack_require__(197);
 
-	var _libFilter_props_from = __webpack_require__(193);
+	var _libFilter_props_from = __webpack_require__(194);
 
 	var Th = (function (_React$Component) {
 	    _inherits(Th, _React$Component);
@@ -27299,7 +27399,7 @@
 
 
 /***/ },
-/* 199 */
+/* 200 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -27396,7 +27496,7 @@
 
 
 /***/ },
-/* 200 */
+/* 201 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -27421,11 +27521,11 @@
 
 	var _react2 = _interopRequireDefault(_react);
 
-	var _td = __webpack_require__(201);
+	var _td = __webpack_require__(202);
 
-	var _libTo_array = __webpack_require__(203);
+	var _libTo_array = __webpack_require__(204);
 
-	var _libFilter_props_from = __webpack_require__(193);
+	var _libFilter_props_from = __webpack_require__(194);
 
 	var Tr = (function (_React$Component) {
 	    _inherits(Tr, _React$Component);
@@ -27485,7 +27585,7 @@
 
 
 /***/ },
-/* 201 */
+/* 202 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -27508,11 +27608,11 @@
 
 	var _react2 = _interopRequireDefault(_react);
 
-	var _libIs_react_component = __webpack_require__(202);
+	var _libIs_react_component = __webpack_require__(203);
 
-	var _libStringable = __webpack_require__(195);
+	var _libStringable = __webpack_require__(196);
 
-	var _unsafe = __webpack_require__(196);
+	var _unsafe = __webpack_require__(197);
 
 	var Td = (function (_React$Component) {
 	    _inherits(Td, _React$Component);
@@ -27575,7 +27675,7 @@
 
 
 /***/ },
-/* 202 */
+/* 203 */
 /***/ function(module, exports) {
 
 	// this is a bit hacky - it'd be nice if React exposed an API for this
@@ -27592,7 +27692,7 @@
 
 
 /***/ },
-/* 203 */
+/* 204 */
 /***/ function(module, exports) {
 
 	"use strict";
@@ -27613,7 +27713,7 @@
 
 
 /***/ },
-/* 204 */
+/* 205 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -27659,7 +27759,7 @@
 
 
 /***/ },
-/* 205 */
+/* 206 */
 /***/ function(module, exports, __webpack_require__) {
 
 	'use strict';
@@ -27822,7 +27922,7 @@
 
 
 /***/ },
-/* 206 */
+/* 207 */
 /***/ function(module, exports) {
 
 	'use strict';
@@ -27921,13 +28021,13 @@
 
 
 /***/ },
-/* 207 */
+/* 208 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use es6";
 
 	var React = __webpack_require__(147);
-	var JourneyProperty = __webpack_require__(208);
+	var JourneyProperty = __webpack_require__(209);
 
 	var JourneyProperties = React.createClass({displayName: "JourneyProperties",
 	  createProperty: function(title, value) {
@@ -27956,7 +28056,7 @@
 	module.exports = JourneyProperties;
 
 /***/ },
-/* 208 */
+/* 209 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use es6";
@@ -27976,15 +28076,15 @@
 	module.exports = JourneyProperty;
 
 /***/ },
-/* 209 */
+/* 210 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use es6";
 
 	var React = __webpack_require__(147);
 
-	var SuggestionInput = __webpack_require__(210);
-	var SuggestionList = __webpack_require__(211);
+	var SuggestionInput = __webpack_require__(211);
+	var SuggestionList = __webpack_require__(212);
 
 	var Geosuggestion = React.createClass({displayName: "Geosuggestion",
 
@@ -28024,7 +28124,7 @@
 	module.exports = Geosuggestion;
 
 /***/ },
-/* 210 */
+/* 211 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use es6";
@@ -28053,14 +28153,14 @@
 	module.exports = SuggestionInput;
 
 /***/ },
-/* 211 */
+/* 212 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use es6";
 
 	var React = __webpack_require__(147);
 
-	var Suggestion = __webpack_require__(212);
+	var Suggestion = __webpack_require__(213);
 
 	var SuggestionList = React.createClass({displayName: "SuggestionList",
 	  generateSuggestions: function() {
@@ -28103,7 +28203,7 @@
 	module.exports = SuggestionList;
 
 /***/ },
-/* 212 */
+/* 213 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use es6";
@@ -28125,15 +28225,15 @@
 	module.exports = Suggestion;
 
 /***/ },
-/* 213 */
+/* 214 */
 /***/ function(module, exports, __webpack_require__) {
 
 	"use es6";
 
 	var React = __webpack_require__(147);
 
-	var Geosuggestion = __webpack_require__(209);
-	var AddressTypeConstants = __webpack_require__(214);
+	var Geosuggestion = __webpack_require__(210);
+	var AddressTypeConstants = __webpack_require__(215);
 
 	var JourneyLocationInput = React.createClass({displayName: "JourneyLocationInput",
 
@@ -28172,7 +28272,7 @@
 	module.exports = JourneyLocationInput;
 
 /***/ },
-/* 214 */
+/* 215 */
 /***/ function(module, exports) {
 
 	"use es6";
@@ -28181,61 +28281,6 @@
 	  START: "START",
 	  END: "END"
 	};
-
-/***/ },
-/* 215 */
-/***/ function(module, exports, __webpack_require__) {
-
-	"use es6";
-
-	var request = __webpack_require__(180);
-	var Promise = __webpack_require__(183).Promise;
-
-	var EstimatesFetcher = {
-	  timeEstimateApi: "https://api.uber.com/v1/estimates/time",
-	  costEstimateApi: "https://api.uber.com/v1/estimates/price",
-	  serverToken: "We0MNCaIpx00F_TUopt4jgL9BzW3bWWt16aYM4mh",
-
-	  getTimeEstimatesUrl: function(startLatitude, startLongitude) {
-	    return this.timeEstimateApi + "?start_latitude=" + startLatitude + "&start_longitude=" + startLongitude + "&server_token=" + this.serverToken;
-	  },
-
-	  getCostEstimatesUrl: function(startLatitude, startLongitude, endLatitude, endLongitude) {
-	    return this.costEstimateApi + "?start_latitude=" + startLatitude + "&start_longitude=" + startLongitude + "&end_latitude=" + endLatitude + "&end_longitude=" + endLongitude + "&server_token=" + this.serverToken;
-	  },
-
-	  fetchTimeEstimates: function(startLatitude, startLongitude) {
-	    var url = this.getTimeEstimatesUrl(startLatitude, startLongitude);
-	    return new Promise(function (resolve, reject) {
-	      request
-	        .get(url)
-	        .end(function (err, res) {
-	          if (res.status === 404) {
-	            reject();
-	          } else {
-	            resolve(res.body);
-	          }
-	      });
-	    });
-	  },
-
-	  fetchCostEstimates: function(startLatitude, startLongitude, endLatitude, endLongitude) {
-	    var url = this.getCostEstimatesUrl(startLatitude, startLongitude, endLatitude, endLongitude);
-	    return new Promise(function (resolve, reject) {
-	      request
-	        .get(url)
-	        .end(function (err, res) {
-	          if (res.status === 404) {
-	            reject();
-	          } else {
-	            resolve(res.body);
-	          }
-	      });
-	    });
-	  }
-	};
-
-	module.exports = EstimatesFetcher;
 
 /***/ }
 /******/ ]);

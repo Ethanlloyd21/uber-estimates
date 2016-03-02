@@ -87,6 +87,14 @@ var Store = assign({}, EventEmitter.prototype, {
 
   getEndLocationCoordinates: function() {
     return _endLocationCoordinates;
+  },
+
+  getTimeEstimatesData: function() {
+    return _timeEstimatesData;
+  },
+
+  getCostEstimatesData: function() {
+    return _costEstimatesData;
   }
 
 });
@@ -109,6 +117,14 @@ Store.dispatchToken = Dispatcher.register(function (payload) {
 
     case ActionConstants.GET_END_LOCATION_COORDINATES:
       setEndLocationCoordinates(action.coordinateData);
+      break;
+
+    case ActionConstants.GET_TIME_ESTIMATES:
+      setTimeEstimatesData(action.timeEstimatesData);
+      break;
+
+    case ActionConstants.GET_COST_ESTIMATES:
+      setCostEstimatesData(action.costEstimatesData);
       break;
 
     default:
